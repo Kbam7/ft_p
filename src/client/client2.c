@@ -81,11 +81,19 @@ int main(int argc, char *argv[])
     int quit = 0;
     while (!quit)
     {
+        // Get input from user
+        fgets(buf, 1024, stdin);
+
+        // Send user input to server
+        send(sockfd, buf, 1024, 0);
+
+        // Read response
         if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
             perror("recv");
             exit(1);
         }
 
+        // If there is a response, print out response
         if (numbytes > 0)
         {
             buf[numbytes] = '\0';

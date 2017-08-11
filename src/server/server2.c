@@ -108,6 +108,7 @@ int main(void)
 
     printf("server: waiting for connections...\n");
 
+    char buf[1024];
     while(1) {  // main accept() loop
         sin_size = sizeof their_addr;
         new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
@@ -123,8 +124,27 @@ int main(void)
 
         if (!fork()) { // this is the child process
             close(sockfd); // child doesn't need the listener
-            if (send(new_fd, "Hello, world!", 13, 0) == -1)
-                perror("send");
+            while (1)
+            {
+                // Receive data
+                rv = recv(new_fd, &buf, 1024, 0);
+
+                buf[rv] = '\0';
+                // Print out data
+                printf("Server received: %s\n", buf);
+
+                // Get server input
+                fgets(buf, 1024, stdin);
+                // Echo back
+                send(new_fd, buf, rv, 0);
+
+                if (strcmp(buf, "quit") == 0)
+                {
+                    send(new_fd, "Server Quitting...", 11, 0);
+                    break;
+                }
+                
+            }
             close(new_fd);
             exit(0);
         }

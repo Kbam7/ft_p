@@ -6,7 +6,7 @@
 #    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/17 12:35:16 by kbamping          #+#    #+#              #
-#    Updated: 2017/08/11 12:52:07 by kbamping         ###   ########.fr        #
+#    Updated: 2017/08/11 14:11:46 by kbamping         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,8 @@ SVR_PATH	= ./src/server
 CLT_PATH	= ./src/client
 
 
-SVR_SRCS	= $(SVR_PATH)/server.c
-CLT_SRCS	= $(CLT_PATH)/client.c
+SVR_SRCS	= $(SVR_PATH)/server2.c
+CLT_SRCS	= $(CLT_PATH)/client2.c
 
 SVR_OBJS	= $(SVR_SRCS:%.c=%.o)
 CLT_OBJS	= $(CLT_SRCS:%.c=%.o)

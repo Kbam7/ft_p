@@ -21,6 +21,7 @@
 
 void sigchld_handler(int s)
 {
+    (void)s;
     // waitpid() might overwrite errno, so we save and restore it:
     int saved_errno = errno;
 

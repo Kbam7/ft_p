@@ -1,5 +1,7 @@
 /*FTP Client*/
 
+#include <arpa/inet.h>
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
@@ -14,7 +16,7 @@ int main(int argc,char *argv[])
 /*     struct stat obj; */
     int sock;
     int choice;
-    char buf[1024], command[5], filename[20], *f;
+    char buf[1024], filename[20], *f;
     int k, size, status;
     int filehandle;
 
@@ -27,9 +29,23 @@ int main(int argc,char *argv[])
 
     // Setup
     server.sin_family = AF_INET;
-    server.sin_port = atoi(argv[2]);
-    server.sin_addr.s_addr = 0;
+    if (argc == 3)
+    {
+        if (inet_aton(argv[1], &(server.sin_addr)) == 0 )
+        {
+            printf("invalid address %s", argv[1]);
+            exit(0);
+        }
+        //server.sin_addr.s_addr = INADDR_ANY;
+        server.sin_port = atoi(argv[2]);
+    }
+    else
+    {
+        server.sin_addr.s_addr = INADDR_ANY;
+        server.sin_port = 54000;
+    }
     
+    printf("Connecting..\n");
     if((k = connect(sock,(struct sockaddr*)&server, sizeof(server))) == -1)
     {
         printf("Connect Error");
@@ -127,8 +143,8 @@ int main(int argc,char *argv[])
                     break;
             case 6:
                 strcpy(buf, "quit");
-                    send(sock, buf, 1024, 0);
-                    recv(sock, &status, 1024, 0);
+                send(sock, buf, 1024, 0);
+                recv(sock, &status, 1024, 0);
                 if(status)
                 {
                     printf("Server closed\nQuitting..\n");
@@ -137,7 +153,7 @@ int main(int argc,char *argv[])
                 printf("Server failed to close connection\n");
             case 7:
                 recv(sock, f, 1024, 0);
-                dprintf(2, "-->%s", f);
+                dprintf(2, "--> %s\n", f);
         }
     }
     return (0);

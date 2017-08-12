@@ -6,19 +6,11 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 12:29:32 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/12 14:59:57 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/12 19:11:58 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp_server.h"
-
-// get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa)
-{
-    if (sa->sa_family == AF_INET)
-        return &(((struct sockaddr_in*)sa)->sin_addr);
-    return &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
 
 /*
     Accepts client connections and adds them to client array.
@@ -28,8 +20,10 @@ t_client	*ftp_accept_client(t_server *server)
 {
     struct sockaddr_storage	clt_addr;
     t_client				*clt;
+	char					*msg;
 
-	clt = server->client_array[server->n_clients];
+	clt = (t_client *)ft_memalloc(sizeof(t_client));
+	server->client_array[server->n_clients] = clt;
 	clt->index = server->n_clients;
     clt->size = sizeof(clt_addr);
     clt->socket = accept(server->listenSocket,
@@ -39,7 +33,9 @@ t_client	*ftp_accept_client(t_server *server)
 		return (NULL);
 	}
 	clt->address = (struct in_addr *)get_in_addr((struct sockaddr *)&clt_addr);
-	ft_printf("server: got connection from %s\n", inet_ntoa(*(clt->address)));
+	msg = ft_strjoin("server: got connection from ", inet_ntoa(*(clt->address)));
+	ftp_error(ERR_INFO, msg);
+	free(msg);
 	server->n_clients++;
 	return (clt);
 }

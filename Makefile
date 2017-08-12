@@ -6,7 +6,7 @@
 #    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/17 12:35:16 by kbamping          #+#    #+#              #
-#    Updated: 2017/08/12 14:44:17 by kbam7            ###   ########.fr        #
+#    Updated: 2017/08/12 19:58:48 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,11 +17,14 @@ SRC_PATH	= ./src
 SVR_PATH	= $(SRC_PATH)/server
 CLT_PATH	= $(SRC_PATH)/client
 
+GLOBAL_SRCS	=	$(SRC_PATH)/ftp_errors.c $(SRC_PATH)/ftp_network.c
+
 SVR_SRCS	=	$(SVR_PATH)/server.c $(SVR_PATH)/server_init.c \
 				$(SVR_PATH)/server_signals.c $(SVR_PATH)/connect.c \
-				$(SRC_PATH)/ftp_errors.c
+				$(GLOBAL_SRCS)
 
-CLT_SRCS	= 	$(CLT_PATH)/client.c $(SRC_PATH)/ftp_errors.c
+CLT_SRCS	= 	$(CLT_PATH)/client.c \
+				$(GLOBAL_SRCS)
 
 SVR_OBJS	= $(SVR_SRCS:%.c=%.o)
 CLT_OBJS	= $(CLT_SRCS:%.c=%.o)

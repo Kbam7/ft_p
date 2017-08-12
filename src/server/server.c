@@ -1,96 +1,76 @@
-/*FTP server*/
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-/* #include <sys/socket.h>
-#include <netinet/in.h> */
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/08/11 20:40:20 by kbam7             #+#    #+#             */
+/*   Updated: 2017/08/12 14:52:41 by kbam7            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int main(int argc, char *argv[])
+#include "ftp_server.h"
+
+int main(void)
 {
-     struct sockaddr_in  server, client; 
-    int                 listenSock, newClient;
-    char                buf[1024], command[1024];
-    unsigned int        len;
-    int                 i;
+    t_server    *server;
+    t_client    *client;
 
-//  For use with getaddrinfo()
-/*     memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE; // use my IP
-
-
-    if (getaddrinfo(NULL, argv[1], &hints, &res))
-    {
-        dprintf(2, "Cannot get address information for : %s", argv[1]);
-        exit(1);
+    server = NULL;
+    init_server(server);
+    ftp_error(ERR_INFO, "server: waiting for connections...");
+    while(1) {
+        if ((client = ftp_accept_client(server)) == NULL)
+            continue;
+        ftp_handle_client(server, client);
     }
-*/
-    // Create listen-socket
-    if((listenSock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-    {
-        dprintf(2, "Socket creation failed");
-        exit(1);
+    // Server loop ended
+    close(server->listenSocket);
+    return (EXIT_SUCCESS);
+}
+
+/* Handles new client */
+void    ftp_handle_client(t_server *server, t_client *client)
+{
+    // Create new child process for client
+    if ((client->pid = fork() == -1)) {
+        ftp_error(ERR_WARN, "server: Could not fork for new connection");
+        ftp_disconnect_client(server, client->index);
     }
-
-    // Setup listen-socket address and port
-    if (argc == 2)
-        server.sin_port = atoi(argv[1]);
-    else
-        server.sin_port = 54000;
-    server.sin_addr.s_addr = INADDR_ANY;
-
-    // Bind socket with address
-    if(bind(listenSock, (struct sockaddr *)&server, sizeof(server)) == -1)
-    {
-        printf("Binding error");
-        close(listenSock);
-        exit(1);
-    }
-
-    // Listen to socket
-    if(listen(listenSock, 10) == -1)
-    {
-        printf("Listen failed");
-        close(listenSock);
-        exit(1);
-
-    }
-
-    printf("Waiting for connections..\n");
-
-    // Accept socket requests
-    len = sizeof(client);
-    newClient = accept(listenSock,(struct sockaddr*)&client, &len);
-
-    struct sockaddr details;
-    unsigned int detLen = sizeof(details);
-    getsockname(newClient, &details, &detLen);
-    printf("Accepted connection..\n");
-    while(1)
-    {
-        // Read from new client
-        recv(newClient, buf, 1024, 0);
-
-        // Get a single command from the buf
-        sscanf(buf, "%s", command);
+    else if (client->pid == 0) {
+        // child doesn't need the listener
+        close(server->listenSocket);
+        // Init client
         
-        if (!strcmp(command, "bye") || !strcmp(command, "quit"))
-        {
-            printf("FTP server quitting..\n");
-            i = 1;
-            send(newClient, &i, sizeof(int), 0);
-            close(listenSock);
-            close(newClient);
-            exit(0);
-        }
+        // Client loop
+        while (1)
+            ftp_handle_client_input(client->socket); 
 
-        // Echo back received data
-        send(newClient, buf, 1024, 0);
+        // End of client loop -  Disconnect client
+        ftp_disconnect_client(server, client->index);
+        exit(0);
     }
-    return 0;
+}
+
+void    ftp_handle_client_input(int sock)
+{
+    int     rv;
+    char    buf[MAX_READSIZE];
+    // Receive data
+    rv = recv(sock, &buf, 1024, 0);
+
+    buf[rv] = '\0';
+    // Print out data
+    printf("Server received: %s\n", buf);
+
+    // Get server input
+    fgets(buf, 1024, stdin);
+    // Echo back
+    send(sock, buf, rv, 0);
+
+    if (strcmp(buf, "quit") == 0)
+    {
+        send(sock, "Server Quitting...", 11, 0);
+    }
 }

@@ -3,58 +3,81 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
+#    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/17 12:35:16 by kbamping          #+#    #+#              #
-#    Updated: 2017/08/11 14:11:46 by kbamping         ###   ########.fr        #
+#    Updated: 2017/08/12 14:44:17 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 #-- PROGRAM | SOURCE FILES --#
 SERVER		= server
 CLIENT		= client
-SVR_PATH	= ./src/server
-CLT_PATH	= ./src/client
+SRC_PATH	= ./src
+SVR_PATH	= $(SRC_PATH)/server
+CLT_PATH	= $(SRC_PATH)/client
 
+SVR_SRCS	=	$(SVR_PATH)/server.c $(SVR_PATH)/server_init.c \
+				$(SVR_PATH)/server_signals.c $(SVR_PATH)/connect.c \
+				$(SRC_PATH)/ftp_errors.c
 
-SVR_SRCS	= $(SVR_PATH)/server2.c
-CLT_SRCS	= $(CLT_PATH)/client2.c
+CLT_SRCS	= 	$(CLT_PATH)/client.c $(SRC_PATH)/ftp_errors.c
 
 SVR_OBJS	= $(SVR_SRCS:%.c=%.o)
 CLT_OBJS	= $(CLT_SRCS:%.c=%.o)
 
 #-- COMPILER | LIBS | FLAGS --#
-INCLUDES	= -I ./include
+LIBFT 		= -L libft -lft
+INCLUDES	= -I include -I libft/includes
 WFLAGS		= -Wall -Wextra -Werror -g3
 CC			= gcc
 CCFLAGS		= $(WFLAGS) $(INCLUDES)
 
-.PHONY: all client server clean fclean re \
+.PHONY: all clean fclean re \
 		clean_svr clean_clt \
 		fclean_svr fclean_clt \
-		run run_valgrind
+		run run_valgrind re_libft \
+		libft clean_libft fclean_libft
 
 
 #-- RULES --#
-all: $(SERVER) $(CLIENT)
+all: libft $(SERVER) $(CLIENT)
+
+# sources
+$(SRC_PATH)/%.o : $(SRC_PATH)/%.c
+	@$(CC) $(CCFLAGS) -c $< $(LIBFT) -o $@
+	@echo "\033[01;36m[FTP] \t\t\t-- \033[0m$^ \033[01;36m>>\033[00;32m $@ \033[0m"
 
 # server
 $(SVR_PATH)/%.o : $(SVR_PATH)/%.c
-	@$(CC) $(CCFLAGS) -c $< -o $@
+	@$(CC) $(CCFLAGS) -c $< $(LIBFT) -o $@
 	@echo "\033[01;36m[$(SERVER)] \t\t-- \033[0m$^ \033[01;36m>>\033[00;32m $@ \033[0m"
 
 $(SERVER): $(SVR_OBJS)
-	@$(CC) $(CCFLAGS) $^ -o $@
+	@$(CC) $(CCFLAGS) $^ $(LIBFT) -o $@
 	@echo "\033[01;36m[$@] \t\t-- \033[00;32mCOMPILED\033[0m\n"
 
 # client
 $(CLT_PATH)/%.o : $(CLT_PATH)/%.c
-	@$(CC) $(CCFLAGS) -c $< -o $@
+	@$(CC) $(CCFLAGS) -c $< $(LIBFT) -o $@
 	@echo "\033[01;36m[$(CLIENT)] \t\t-- \033[0m$^ \033[01;36m>>\033[00;32m $@ \033[0m"
 
 $(CLIENT): $(CLT_OBJS)
-	@$(CC) $(CCFLAGS) $^ -o $@
+	@$(CC) $(CCFLAGS) $^ $(LIBFT) -o $@
 	@echo "\033[01;36m[$@] \t\t-- \033[00;32mCOMPILED\033[0m\n"
+
+# libft
+libft:
+	@$(MAKE) -s -C libft/ all
+
+clean_libft:
+	@$(MAKE) -s -C libft/ clean
+
+fclean_libft:
+	@$(MAKE) -s -C libft/ fclean
+
+re_libft:
+	@$(MAKE) -s -C libft/ re
 
 #-- General rules
 # clean

@@ -1,160 +1,108 @@
-/*FTP Client*/
+/*
+** client.c -- a stream socket client demo
+*/
 
-#include <arpa/inet.h>
-
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 
-int main(int argc,char *argv[])
+#include <arpa/inet.h>
+
+#define PORT "54000" // the port client will be connecting to 
+
+#define MAXDATASIZE 100 // max number of bytes we can get at once 
+
+// get sockaddr, IPv4 or IPv6:
+void *get_in_addr(struct sockaddr *sa)
 {
-    struct sockaddr_in server;
-/*     struct stat obj; */
-    int sock;
-    int choice;
-    char buf[1024], filename[20], *f;
-    int k, size, status;
-    int filehandle;
+    if (sa->sa_family == AF_INET) {
+        return &(((struct sockaddr_in*)sa)->sin_addr);
+    }
 
-    // Create socket
-    if((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-    {
-        printf("socket creation failed");
+    return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}
+
+int main(int argc, char *argv[])
+{
+    int sockfd, numbytes;  
+    char buf[MAXDATASIZE];
+    struct addrinfo hints, *servinfo, *p;
+    int rv;
+
+    if (argc != 2) {
+        fprintf(stderr,"usage: client hostname\n");
         exit(1);
     }
 
-    // Setup
-    server.sin_family = AF_INET;
-    if (argc == 3)
-    {
-        if (inet_aton(argv[1], &(server.sin_addr)) == 0 )
-        {
-            printf("invalid address %s", argv[1]);
-            exit(0);
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    // Get info for ip/hostname
+    if ((rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)) != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+        return 1;
+    }
+
+    // loop through all the results and connect to the first we can
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            perror("client: socket");
+            continue;
         }
-        //server.sin_addr.s_addr = INADDR_ANY;
-        server.sin_port = atoi(argv[2]);
-    }
-    else
-    {
-        server.sin_addr.s_addr = INADDR_ANY;
-        server.sin_port = 54000;
-    }
-    
-    printf("Connecting..\n");
-    if((k = connect(sock,(struct sockaddr*)&server, sizeof(server))) == -1)
-    {
-        printf("Connect Error");
-        exit(1);
+
+        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            close(sockfd);
+            perror("client: connect");
+            continue;
+        }
+
+        break;
     }
 
-    int i = 1;
-    while(1)
+    if (p == NULL) {
+        fprintf(stderr, "client: failed to connect\n");
+        return 2;
+    }
+
+    struct in_addr *address;
+    address = (struct in_addr *)get_in_addr(p->ai_addr);
+    printf("client: connecting to %s\n", inet_ntoa(*address));
+
+    freeaddrinfo(servinfo); // all done with this structure
+
+    int quit = 0;
+    while (!quit)
     {
-        printf("Enter a choice:\n1- get\n2- put\n3- pwd\n4- ls\n5- cd\n6- quit\n");
-        scanf("%d", &choice);
-        switch(choice)
+        // Get input from user
+        fgets(buf, 1024, stdin);
+
+        // Send user input to server
+        send(sockfd, buf, 1024, 0);
+
+        // Read response
+        if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+            perror("recv");
+            exit(1);
+        }
+
+        // If there is a response, print out response
+        if (numbytes > 0)
         {
-            case 1:
-                printf("Enter filename to get: ");
-                scanf("%s", filename);
-
-                strcpy(buf, "get ");
-                strcat(buf, filename);
-
-                send(sock, buf, 1024, 0);
-                recv(sock, &size, sizeof(int), 0);
-                if (!size) {
-                    printf("No such file on the remote directory\n\n");
-                    break;
-                }
-
-                f = (char *)malloc(size);
-                recv(sock, f, size, 0);
-
-                while (1)
-                {
-                    filehandle = open(filename, O_CREAT | O_EXCL | O_WRONLY, 0666);
-                    if(filehandle == -1)
-                        sprintf(filename + strlen(filename), "%d", i);//needed only if same directory is used for both server and client
-                    else
-                        break;
-                }
-                write(filehandle, f, size);
-                close(filehandle);
-                strcpy(buf, "cat ");
-                strcat(buf, filename);
-                system(buf);
+            buf[numbytes] = '\0';
+            printf("client: received '%s'\n",buf);
+            if (strcmp(buf, "quit") == 0)
                 break;
-            case 2:
-                /*printf("Enter filename to put to server: ");
-                scanf("%s", filename);
-                filehandle = open(filename, O_RDONLY);
-                    if(filehandle == -1)
-                    {
-                        printf("No such file on the local directory\n\n");
-                        break;
-                    }
-                    strcpy(buf, "put ");
-                strcat(buf, filename);
-                send(sock, buf, 1024, 0);
-                stat(filename, &obj);
-                size = obj.st_size;
-                send(sock, &size, sizeof(int), 0);
-                sendfile(sock, filehandle, NULL, size);
-                recv(sock, &status, sizeof(int), 0);
-                if(status)
-                printf("File stored successfully\n");
-                else
-                printf("File failed to be stored to remote machine\n"); */
-                break;
-            case 3:
-                strcpy(buf, "pwd");
-                send(sock, buf, 1024, 0);
-                recv(sock, buf, 1024, 0);
-                printf("The path of the remote directory is: %s\n", buf);
-                break;
-            case 4:
-                strcpy(buf, "ls");
-                    send(sock, buf, 1024, 0);
-                recv(sock, &size, sizeof(int), 0);
-                    f = (char *)malloc(size);
-                    recv(sock, f, size, 0);
-                filehandle = creat("temp.txt", O_WRONLY);
-                write(filehandle, f, size);
-                close(filehandle);
-                    printf("The remote directory listing is as follows:\n");
-                system("cat temp.txt");
-                break;
-            case 5:
-                strcpy(buf, "cd ");
-                printf("Enter the path to change the remote directory: ");
-                scanf("%s", buf + 3);
-                    send(sock, buf, 1024, 0);
-                recv(sock, &status, sizeof(int), 0);
-                    if(status)
-                    printf("Remote directory successfully changed\n");
-                    else
-                    printf("Remote directory failed to change\n");
-                    break;
-            case 6:
-                strcpy(buf, "quit");
-                send(sock, buf, 1024, 0);
-                recv(sock, &status, 1024, 0);
-                if(status)
-                {
-                    printf("Server closed\nQuitting..\n");
-                    exit(0);
-                }
-                printf("Server failed to close connection\n");
-            case 7:
-                recv(sock, f, 1024, 0);
-                dprintf(2, "--> %s\n", f);
         }
     }
-    return (0);
+    close(sockfd);
+
+    return 0;
 }

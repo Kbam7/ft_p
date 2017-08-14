@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 10:47:37 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/12 19:53:23 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/14 10:33:24 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,13 @@ int     	ftp_create_socket(struct addrinfo *p);
 t_client	*ftp_accept_client(t_server *server);
 void		ftp_disconnect_client(t_server *server, unsigned int i_client);
 void    	ftp_handle_client(t_server *server, t_client *client);
+
+/* Server Commands */
+int     ftp_ls(int sock, char *args);
+int     ftp_cd(int sock, char *args);
+int     ftp_get(int sock, char *args);
+int     ftp_put(int sock, char *args);
+int     ftp_pwd(int sock, char *args);
+int     ftp_quit(void);
 
 #endif /* FTP_SERVER_H */

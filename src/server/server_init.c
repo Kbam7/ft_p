@@ -6,11 +6,13 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 12:31:41 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/12 20:05:15 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/13 17:19:12 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp_server.h"
+#include <sys/mman.h>
+#include <unistd.h>
 
 int     ftp_bind_socket(int sock, struct sockaddr *addr, socklen_t addrlen);
 
@@ -18,6 +20,15 @@ int     ftp_bind_socket(int sock, struct sockaddr *addr, socklen_t addrlen);
 void	init_server(t_server *server)
 {
     struct sigaction    sa;
+
+    
+    off_t offset, pa_offset;
+
+    offset = 3;
+    pa_offset = offset & ~(sysconf(_SC_PAGE_SIZE) - 1);
+printf("------[%li]---------\n", pa_offset);
+
+
 
 	server->n_clients = 0;
     ftp_get_listening_socket(&(server->listenSocket));

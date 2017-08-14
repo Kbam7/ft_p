@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_server.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 10:47:37 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 10:33:24 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/14 15:16:24 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -32,27 +33,34 @@ typedef	struct	s_ftp_client {
 	
 }				t_client;
 
+typedef struct	s_server_information {
+	char			*port;
+	unsigned int	n_clients;
+	char 			*root_path;
+	char			*pwd;
+}				t_serv_info;
+
 typedef	struct	s_ftp_server {
 	
-	int				listenSocket;
-	unsigned int	n_clients;
-	t_client		*client_array[MAX_CLIENTS];
+	int			listenSocket;
+	t_client	*client_array[MAX_CLIENTS];
+	t_serv_info	i;
 
 }				t_server;
 
-void 		init_server(t_server *server);
-void    	ftp_get_listening_socket(int *sock);
+void 		init_server(t_server *server, int ac, char **av);
+void    	ftp_get_listening_socket(int *sock, char *port);
 int     	ftp_create_socket(struct addrinfo *p);
 t_client	*ftp_accept_client(t_server *server);
 void		ftp_disconnect_client(t_server *server, unsigned int i_client);
 void    	ftp_handle_client(t_server *server, t_client *client);
 
 /* Server Commands */
-int     ftp_ls(int sock, char *args);
-int     ftp_cd(int sock, char *args);
-int     ftp_get(int sock, char *args);
-int     ftp_put(int sock, char *args);
-int     ftp_pwd(int sock, char *args);
+int     ftp_ls(t_server *s, int sock, char *args);
+int     ftp_cd(t_server *s, int sock, char *args);
+int     ftp_get(t_server *s, int sock, char *args);
+int     ftp_put(t_server *s, int sock, char *args);
+int     ftp_pwd(t_server *s, int sock, char *args);
 int     ftp_quit(void);
 
 #endif /* FTP_SERVER_H */

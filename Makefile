@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
+#    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/17 12:35:16 by kbamping          #+#    #+#              #
-#    Updated: 2017/08/14 10:53:08 by kbam7            ###   ########.fr        #
+#    Updated: 2017/08/14 12:56:10 by kbamping         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,12 +50,12 @@ all: libft $(SERVER) $(CLIENT)
 
 # sources
 $(SRC_PATH)/%.o : $(SRC_PATH)/%.c
-	@$(CC) $(CCFLAGS) -c $< $(LIBFT) -o $@
+	@$(CC) $(CCFLAGS) -c $< -o $@
 	@echo "\033[01;36m[FTP] \t\t\t-- \033[0m$^ \033[01;36m>>\033[00;32m $@ \033[0m"
 
 # server
 $(SVR_PATH)/%.o : $(SVR_PATH)/%.c
-	@$(CC) $(CCFLAGS) -c $< $(LIBFT) -o $@
+	@$(CC) $(CCFLAGS) -c $< -o $@
 	@echo "\033[01;36m[$(SERVER)] \t\t-- \033[0m$^ \033[01;36m>>\033[00;32m $@ \033[0m"
 
 $(SERVER): $(SVR_OBJS)
@@ -64,7 +64,7 @@ $(SERVER): $(SVR_OBJS)
 
 # client
 $(CLT_PATH)/%.o : $(CLT_PATH)/%.c
-	@$(CC) $(CCFLAGS) -c $< $(LIBFT) -o $@
+	@$(CC) $(CCFLAGS) -c -o $@
 	@echo "\033[01;36m[$(CLIENT)] \t\t-- \033[0m$^ \033[01;36m>>\033[00;32m $@ \033[0m"
 
 $(CLIENT): $(CLT_OBJS)

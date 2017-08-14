@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_handlers.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/14 10:02:54 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 11:21:01 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/14 15:45:19 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,6 @@ int		ftp_handle_user_commands(int sock)
 
     ft_memcpy(buf, tmp, ft_strlen(tmp));
     ft_memdel((void *)&tmp);
-    
-    ftp_error(ERR_INFO, buf);
-    ftp_error(ERR_INFO, ft_itoa(ft_strlen(buf)));
 
     return (ftp_run_command(sock, buf));
 

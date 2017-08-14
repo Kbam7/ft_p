@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_client.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/13 18:26:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 10:55:24 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/14 15:28:41 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <fcntl.h>
 # include <errno.h>
 # include <string.h>
 

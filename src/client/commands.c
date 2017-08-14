@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/14 09:59:43 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 12:23:46 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/14 15:44:37 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,23 @@ int     ftp_ls(int sock, char *cmd)
     char    *str;
     char    *tmp;
 
-    ftp_error(ERR_INFO, "Doing server ls");
+	int rv;
+
     // List files on server
     ftp_send_msg(sock, cmd, ft_strlen(cmd));
-    while (ftp_receive_msg(sock, &buf) > 0)
-    {
+	// Read response
+	str = ft_strnew(1);
+	if ((rv = ftp_receive_msg(sock, &buf)) > 0)
+	{
+		//ftp_error(ERR_INFO, buf);
         tmp = ft_strjoin(str, buf);
         ft_memdel((void **)&str);
         str = tmp;
     }
     ft_putendl(str);
-    return (1);
+	ft_memdel((void **)&str);
+	ft_memset(buf, 0, MAX_MSGSIZE);
+	return (1);
 }
 
 int     ftp_cd(int sock, char *cmd)

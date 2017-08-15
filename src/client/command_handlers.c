@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_handlers.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/14 10:02:54 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 15:45:19 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/14 19:34:06 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int		ftp_handle_user_commands(int sock)
         ;
     if (rv < 0)
         return (-1);
-	// Truncate buf to max size
+	// Truncate tmp to buf size
     if (rv > MAX_MSGSIZE)
         tmp[MAX_MSGSIZE] = 0;
 
@@ -36,12 +36,12 @@ int		ftp_handle_user_commands(int sock)
 
 
 /*         // Send user input to server
-    if (ftp_send_msg(sockfd, buf) < 1)
+    if (ftp_send_data(sockfd, buf) < 1)
         break;
 
     // Read response
     ft_memset(buf, 0, MAX_MSGSIZE + 1);
-    if ((n = ftp_receive_msg(sockfd, &buf)) == 0) // 0 Bytes from server... ? Disconnected?
+    if ((n = ftp_recv_data(sockfd, &buf)) == 0) // 0 Bytes from server... ? Disconnected?
         break;
 
     // If there is a response, print out response

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 19:38:23 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 15:45:47 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/14 20:51:41 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
 
     while (1) {
         ftp_print_client_menu();
-        ftp_handle_user_commands(sock);
+        if (ftp_handle_user_commands(sock) == -1)
+			break;
     }
     ftp_error(ERR_INFO, "Closing client...");
     close(sock);
@@ -45,7 +46,7 @@ void    ftp_print_client_menu(void)
     " #:-  cd\t- Change directory\n"
     " #:-  get\t- Download a file\n"
     " #:-  put\t- Upload a file\n"
-    " #:-  pwd\t- View curreftp_send_msgnt directory\n"
+    " #:-  pwd\t- View curreftp_send_datant directory\n"
     " #:-  quit\t- Close the FTP client\n";
     ft_putendl_fd(menu, STDOUT_FILENO);    
 }

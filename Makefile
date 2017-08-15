@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
+#    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/17 12:35:16 by kbamping          #+#    #+#              #
-#    Updated: 2017/08/14 12:56:10 by kbamping         ###   ########.fr        #
+#    Updated: 2017/08/14 16:43:16 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ SVR_SRCS	=	$(SVR_PATH)/server.c $(SVR_PATH)/server_init.c				\
 				$(SVR_PATH)/commands.c										\
 				$(GLOBAL_SRCS)
 
-CLT_SRCS	= 	$(CLT_PATH)/client.c $(CLT_PATH)/client_init.c					\
+CLT_SRCS	= 	$(CLT_PATH)/client.c $(CLT_PATH)/client_init.c				\
 				$(CLT_PATH)/commands.c $(CLT_PATH)/command_handlers.c		\
 				$(GLOBAL_SRCS)
 
@@ -64,7 +64,7 @@ $(SERVER): $(SVR_OBJS)
 
 # client
 $(CLT_PATH)/%.o : $(CLT_PATH)/%.c
-	@$(CC) $(CCFLAGS) -c -o $@
+	@$(CC) $(CCFLAGS) -c $< -o $@
 	@echo "\033[01;36m[$(CLIENT)] \t\t-- \033[0m$^ \033[01;36m>>\033[00;32m $@ \033[0m"
 
 $(CLIENT): $(CLT_OBJS)

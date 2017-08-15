@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/11 20:40:20 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 15:07:41 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/14 19:34:06 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,14 +76,14 @@ int     ftp_handle_client_input(t_server *s, int sock)
     
     // Receive data
     ft_memset(buf, 0, MAX_MSGSIZE + 1);
-    if ((rv = ftp_receive_msg(sock, &buf)) < 1)
+    if ((rv = ftp_recv_data(sock, &buf)) < 1)
         return (0);
 
     // Print out data
     ft_printf("Server received %d bytes: %s\n", rv, buf);
 
 /*     // Echo back
-    if (ftp_send_msg(sock, buf, ft_strlen(buf)) < 1)
+    if (ftp_send_data(sock, buf, ft_strlen(buf)) < 1)
         return (0); */
 
     // Parse input

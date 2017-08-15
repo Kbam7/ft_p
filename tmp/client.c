@@ -36,13 +36,13 @@ int main(int argc,char *argv[])
             printf("invalid address %s", argv[1]);
             exit(0);
         }
-        //server.sin_addr.s_addr = INADDR_ANY;
-        server.sin_port = atoi(argv[2]);
+        //server.sin_addr.s_addr = htonl(INADDR_ANY);
+        server.sin_port = htons(atoi(argv[2]));
     }
     else
     {
-        server.sin_addr.s_addr = INADDR_ANY;
-        server.sin_port = 54000;
+        server.sin_addr.s_addr = htonl(INADDR_ANY);
+        server.sin_port = htons(54000);
     }
     
     printf("Connecting..\n");

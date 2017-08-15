@@ -39,10 +39,10 @@ int main(int argc, char *argv[])
 
     // Setup listen-socket address and port
     if (argc == 2)
-        server.sin_port = atoi(argv[1]);
+        server.sin_port = htons(atoi(argv[1]));
     else
-        server.sin_port = 54000;
-    server.sin_addr.s_addr = INADDR_ANY;
+        server.sin_port = htons(54000);
+    server.sin_addr.s_addr = htonl(INADDR_ANY);
 
     // Bind socket with address
     if(bind(listenSock, (struct sockaddr *)&server, sizeof(server)) == -1)

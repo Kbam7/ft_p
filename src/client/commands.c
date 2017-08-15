@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/14 09:59:43 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 15:44:37 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/15 01:15:18 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,64 +14,77 @@
 
 int     ftp_ls(int sock, char *cmd)
 {
-    char    buf[MAX_MSGSIZE];
-    char    *str;
-    char    *tmp;
-
+    char    data[MAX_DATASIZE + 1];
 	int rv;
 
-    // List files on server
-    ftp_send_msg(sock, cmd, ft_strlen(cmd));
-	// Read response
-	str = ft_strnew(1);
-	if ((rv = ftp_receive_msg(sock, &buf)) > 0)
-	{
-		//ftp_error(ERR_INFO, buf);
-        tmp = ft_strjoin(str, buf);
-        ft_memdel((void **)&str);
-        str = tmp;
-    }
-    ft_putendl(str);
-	ft_memdel((void **)&str);
-	ft_memset(buf, 0, MAX_MSGSIZE);
+	ft_memset(data, 0, MAX_DATASIZE + 1);
+    // Send command
+    if ((rv = ftp_send_data(sock, cmd, ft_strlen(cmd))) < 1)
+		return (rv);
+	// Read and print out response
+	if ((rv = ftp_recv_data(sock, &data)) < 1)
+		return (rv);
+	ft_putendl(data);
 	return (1);
 }
 
 int     ftp_cd(int sock, char *cmd)
 {
-    ftp_error(ERR_INFO, "Doing server cd");
-    // Change directory on server
-    ftp_send_msg(sock, cmd, ft_strlen(cmd));
-    return (1);
+    char    data[MAX_DATASIZE + 1];
+	int rv;
+
+	ft_memset(data, 0, MAX_DATASIZE + 1);
+    // Send command
+    if ((rv = ftp_send_data(sock, cmd, ft_strlen(cmd))) < 1)
+		return (rv);
+	// Read and print out response
+	if ((rv = ftp_recv_data(sock, &data)) < 1)
+		return (rv);
+	if (ft_strcmp(UNAUTHORISED_AREA, data) == 0)
+		rv = -1;
+	ft_putendl(data);
+	return (rv);
 }
 
 int     ftp_get(int sock, char *cmd)
 {
+	int	rv;
+	
     ftp_error(ERR_INFO, "Get file from server");
-    // Get file on server
-    ftp_send_msg(sock, cmd, ft_strlen(cmd));
-    return (1);
+    // Send command
+    rv = ftp_send_data(sock, cmd, ft_strlen(cmd));
+	return (rv);
 }
 
 int     ftp_put(int sock, char *cmd)
 {
+	int	rv;
+
     ftp_error(ERR_INFO, "Put file onto server");
-    // Put file on server
-    ftp_send_msg(sock, cmd, ft_strlen(cmd));
-    return (1);
+    // Send command
+    rv = ftp_send_data(sock, cmd, ft_strlen(cmd));
+	return (rv);
 }
 
 int     ftp_pwd(int sock, char *cmd)
 {
-    ftp_error(ERR_INFO, "Display current server directory");
-    // Display pwd on server
-    ftp_send_msg(sock, cmd, ft_strlen(cmd));
-    return (1);
+    char    data[MAX_DATASIZE + 1];
+	int rv;
+
+	ft_memset(data, 0, MAX_DATASIZE + 1);
+    // Send command
+    if ((rv = ftp_send_data(sock, cmd, ft_strlen(cmd))) < 1)
+		return (rv);
+	// Read and print out response
+	if ((rv = ftp_recv_data(sock, &data)) < 1)
+		return (rv);
+	ft_putendl(data);
+	return (1);
 }
 
 int     ftp_quit(int sock)
 {
     ftp_error(ERR_INFO, "Quitting");
-    ftp_send_msg(sock, "quit", 4);
-    return (1);
+    ftp_send_data(sock, "quit", 4);
+    return (-1);
 }

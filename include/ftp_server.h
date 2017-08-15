@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 10:47:37 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 15:16:24 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/15 13:18:19 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,9 @@ int     ftp_get(t_server *s, int sock, char *args);
 int     ftp_put(t_server *s, int sock, char *args);
 int     ftp_pwd(t_server *s, int sock, char *args);
 int     ftp_quit(void);
+
+void	ftp_get_cwd(char **cwd);
+char	*ftp_get_path(t_server *s, char *args);
+int		ftp_validate_path(char *root, char *path);
 
 #endif /* FTP_SERVER_H */

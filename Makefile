@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
+#    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/17 12:35:16 by kbamping          #+#    #+#              #
-#    Updated: 2017/08/14 16:43:16 by kbam7            ###   ########.fr        #
+#    Updated: 2017/08/15 13:16:55 by kbamping         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,9 @@ GLOBAL_SRCS	=	$(SRC_PATH)/ftp_errors.c $(SRC_PATH)/ftp_network.c
 
 SVR_SRCS	=	$(SVR_PATH)/server.c $(SVR_PATH)/server_init.c				\
 				$(SVR_PATH)/server_signals.c $(SVR_PATH)/connect.c			\
-				$(SVR_PATH)/commands.c										\
+				$(SVR_PATH)/commands/commands.c								\
+				$(SVR_PATH)/commands/ftp_cd.c								\
+				$(SVR_PATH)/commands/ftp_ls.c								\
 				$(GLOBAL_SRCS)
 
 CLT_SRCS	= 	$(CLT_PATH)/client.c $(CLT_PATH)/client_init.c				\

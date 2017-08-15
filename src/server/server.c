@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/11 20:40:20 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 19:34:06 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/15 13:27:24 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,19 +44,13 @@ int     main(int argc, char **argv)
 /* Handles new client */
 void    ftp_handle_client(t_server *server, t_client *client)
 {
-    // Create new child process for client
     if ((client->pid = fork()) == -1) {
         ftp_error(ERR_WARN, "server: Could not fork for new connection");
         ftp_disconnect_client(server, client->index);
     }
     else if (client->pid == 0) {
-        // child doesn't need the listener
         close(server->listenSocket);
-        // Init client
-
-        // Client loop
         while (1) {
-            //ftp_print_client_menu(client->socket);
 			ftp_error(ERR_INFO, "Waiting for input...");
 			if (ftp_handle_client_input(server, client->socket) == 0) // Client disconnected
 				break;
@@ -81,10 +75,6 @@ int     ftp_handle_client_input(t_server *s, int sock)
 
     // Print out data
     ft_printf("Server received %d bytes: %s\n", rv, buf);
-
-/*     // Echo back
-    if (ftp_send_data(sock, buf, ft_strlen(buf)) < 1)
-        return (0); */
 
     // Parse input
     return (ftp_parse_input(s, sock, buf));

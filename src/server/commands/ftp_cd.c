@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_cd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 10:27:25 by kbamping          #+#    #+#             */
-/*   Updated: 2017/08/15 16:37:28 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/16 13:22:05 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int     ftp_cd(t_server *s, int sock, char *args)
 	rv = -1;
 	args = (args == NULL) ? s->i.root_path : args;
 	tmp = ftp_get_path(s, args);
-	if (ftp_validate_path(s->i.root_path, tmp)) {
+	if (ftp_validate_path("dir", s->i.root_path, tmp)) {
 		if (chdir(tmp) == 0) {
 			ft_memdel((void **)&tmp);
 			ftp_get_cwd(&new_cwd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_init.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 12:31:41 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/15 18:52:05 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/16 13:22:50 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	init_func(t_server *server);
 void	init_server(t_server *server, int ac, char **av)
 {
     struct sigaction	sa;
-	char				*tmp;
 
 	init_func(server);
 

@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 10:47:37 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/16 13:23:34 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/16 15:10:56 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int     	ftp_pwd(t_server *s, int sock, char *args);
 int     	ftp_quit(void);
 
 /* Path Validation */
-int			ftp_validate_path(char *type, char *root, char *path);
+int			ftp_validate_path(char *root, char *path);
 
 /* Command Utils */
 void		ftp_get_cwd(char **cwd);

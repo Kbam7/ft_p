@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 10:25:41 by kbamping          #+#    #+#             */
-/*   Updated: 2017/08/16 13:21:06 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/16 15:17:54 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int     ftp_ls(t_server *s, int sock, char *args)
 	rv = 1;
 	args = (args == NULL) ? "" : args;
 	tmp = ftp_get_path(s, args);
-	if (ftp_validate_path("dir", s->i.root_path, tmp)) {
+	if (ftp_validate_path(s->i.root_path, tmp)) {
 		if ((rv = ftp_ls_readdir(&response, tmp)) == 1) {
 			rv = ftp_send_data(sock, response, ft_strlen(response));
 			ft_memdel((void **)&response);

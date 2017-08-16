@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ftp_network.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/08/16 10:49:33 by kbam7             #+#    #+#             */
+/*   Updated: 2017/08/16 11:14:06 by kbam7            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ftp_network.h"
 
 // get sockaddr, IPv4 or IPv6:
@@ -29,19 +41,21 @@ int	check_recv_rv(int rv)
 int ftp_send_data(int sock, char *data, int len)
 {
     int     rv;
-	char	buf[MAX_MSGSIZE + 1];
+	char	buf[2];
 
-	ft_memset(buf, 0, MAX_MSGSIZE + 1);
 	// Send length of data
-	if ((rv = send(sock, ft_itoa(len), MAX_MSGSIZE, 0)) < 1)
+	if ((rv = send(sock, ft_itoa(len), UNIVERSAL_ANSWER, 0)) < 1)
 		return (check_send_rv(rv));
 	// Wait for confirmation
-	if ((rv = recv(sock, buf, MAX_MSGSIZE, 0)) < 1)
+	ft_memset(buf, 0, 2);
+	if ((rv = recv(sock, buf, 1, 0)) < 1)
 		return (check_send_rv(rv));
 	// Validate confirmation
-	if (ft_strcmp(buf, "1") == 0)
+	if (ft_strcmp(buf, "1") == 0) {
 		if ((rv = send(sock, data, len, 0)) < 1)
 			return (check_send_rv(rv));
+	} else
+		return (-1);
     return (rv);
 }
 
@@ -49,23 +63,27 @@ int ftp_recv_data(int sock, char (*data)[])
 {
     int     rv;
 	int		len;
-	char	buf[MAX_MSGSIZE + 1];
+	char	buf[UNIVERSAL_ANSWER + 1];
     
-	ft_memset(buf, 0, MAX_MSGSIZE + 1);
-	// Read MAX_MSGSIZE bytes, expecting length of incoming data
-    if ((rv = recv(sock, buf, MAX_MSGSIZE, 0)) < 1)
+	ft_memset(buf, 0, UNIVERSAL_ANSWER + 1);
+	// Read MAX_MSGSIZE bytes, expecting length of data
+    if ((rv = recv(sock, buf, UNIVERSAL_ANSWER, 0)) < 1)
         return (check_recv_rv(rv));
-	if (ft_isint(buf) && (len = ft_atoi(buf)) > 0 && len < MAX_DATASIZE) {
+	if (ft_isint(buf) && (len = ft_atoi(buf)) > 0 && len <= MAX_DATASIZE) {
 		// Send confirmation
-		if ((rv = send(sock, "1", MAX_MSGSIZE, 0)) < 1)
+		if ((rv = send(sock, "1", 1, 0)) < 1)
 			return (check_recv_rv(rv));
 		// Read length bytes from socket
 		if ((rv = recv(sock, *data, len, 0)) < 1)
         	return (check_recv_rv(rv));
 	} else {
-		// Invalid filesize
-		if ((rv = send(sock, "0", MAX_MSGSIZE, 0)) < 1)
+		// Invalid datasize
+		if ((rv = send(sock, "0", 1, 0)) < 1)
 			return (check_recv_rv(rv));
+		return (-1);// Invalid datasize
+		if ((rv = send(sock, "0", 1, 0)) < 1)
+			return (check_recv_rv(rv));
+		return (-2);
 	}
     return (rv);
 }

@@ -6,13 +6,11 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 19:38:23 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 20:51:41 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/15 18:22:24 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp_client.h"
-
-void    ftp_print_client_menu(void);
 
 int main(int argc, char *argv[])
 {
@@ -27,7 +25,7 @@ int main(int argc, char *argv[])
         ftp_init_client(&sock, argv[1], argv[2]);
 
     while (1) {
-        ftp_print_client_menu();
+        ftp_print_prompt();
         if (ftp_handle_user_commands(sock) == -1)
 			break;
     }
@@ -35,18 +33,4 @@ int main(int argc, char *argv[])
     close(sock);
 
     return (EXIT_SUCCESS);
-}
-
-void    ftp_print_client_menu(void)
-{
-    char    *menu;
-
-    menu = "\t---[FTP SERVER]---\n\n  -[MENU]-\n"
-    " #:-  ls\t- List files in current directory\n"
-    " #:-  cd\t- Change directory\n"
-    " #:-  get\t- Download a file\n"
-    " #:-  put\t- Upload a file\n"
-    " #:-  pwd\t- View curreftp_send_datant directory\n"
-    " #:-  quit\t- Close the FTP client\n";
-    ft_putendl_fd(menu, STDOUT_FILENO);    
 }

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
+#    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/17 12:35:16 by kbamping          #+#    #+#              #
-#    Updated: 2017/08/15 13:16:55 by kbamping         ###   ########.fr        #
+#    Updated: 2017/08/15 18:44:41 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,13 +21,20 @@ GLOBAL_SRCS	=	$(SRC_PATH)/ftp_errors.c $(SRC_PATH)/ftp_network.c
 
 SVR_SRCS	=	$(SVR_PATH)/server.c $(SVR_PATH)/server_init.c				\
 				$(SVR_PATH)/server_signals.c $(SVR_PATH)/connect.c			\
-				$(SVR_PATH)/commands/commands.c								\
+				$(SVR_PATH)/handle_client.c									\
+				$(SVR_PATH)/commands/command_utils.c						\
 				$(SVR_PATH)/commands/ftp_cd.c								\
+				$(SVR_PATH)/commands/ftp_get.c								\
 				$(SVR_PATH)/commands/ftp_ls.c								\
+				$(SVR_PATH)/commands/ftp_put.c								\
+				$(SVR_PATH)/commands/ftp_pwd.c								\
+				$(SVR_PATH)/commands/ftp_quit.c								\
+				$(SVR_PATH)/commands/validate_path.c						\
 				$(GLOBAL_SRCS)
 
 CLT_SRCS	= 	$(CLT_PATH)/client.c $(CLT_PATH)/client_init.c				\
 				$(CLT_PATH)/commands.c $(CLT_PATH)/command_handlers.c		\
+				$(CLT_PATH)/ftp_client_ui.c									\
 				$(GLOBAL_SRCS)
 
 SVR_OBJS	= $(SVR_SRCS:%.c=%.o)
@@ -115,13 +122,3 @@ fclean_clt: clean_clt
 
 # run
 re: fclean all
-
-## NEED TO MAKE A PROGRAM THAT SIMULATES A   CLT -> SVR  INTERACTION
-#run:
-#	@rm -f $(PROG)
-#	@echo "\033[01;36m$(PROG) \t\t-- \033[00;32mREMOVED EXECUTABLE\033[0m\n"
-#	@$(MAKE) -s all
-#	./$(PROG) example.avm
-
-#run_valgrind:
-#	valgrind --track-origins=yes --leak-check=full --show-reachable=yes ./$(PROG) example.avm

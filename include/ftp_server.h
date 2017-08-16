@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_server.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 10:47:37 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/15 13:18:19 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/16 10:08:49 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,23 +48,28 @@ typedef	struct	s_ftp_server {
 
 }				t_server;
 
+/* Init */
 void 		init_server(t_server *server, int ac, char **av);
-void    	ftp_get_listening_socket(int *sock, char *port);
-int     	ftp_create_socket(struct addrinfo *p);
 t_client	*ftp_accept_client(t_server *server);
 void		ftp_disconnect_client(t_server *server, unsigned int i_client);
+
+
+/* Handle Client */
 void    	ftp_handle_client(t_server *server, t_client *client);
 
 /* Server Commands */
-int     ftp_ls(t_server *s, int sock, char *args);
-int     ftp_cd(t_server *s, int sock, char *args);
-int     ftp_get(t_server *s, int sock, char *args);
-int     ftp_put(t_server *s, int sock, char *args);
-int     ftp_pwd(t_server *s, int sock, char *args);
-int     ftp_quit(void);
+int     	ftp_ls(t_server *s, int sock, char *args);
+int     	ftp_cd(t_server *s, int sock, char *args);
+int     	ftp_get(t_server *s, int sock, char *args);
+int     	ftp_put(t_server *s, int sock, char *args);
+int     	ftp_pwd(t_server *s, int sock, char *args);
+int     	ftp_quit(void);
 
-void	ftp_get_cwd(char **cwd);
-char	*ftp_get_path(t_server *s, char *args);
-int		ftp_validate_path(char *root, char *path);
+/* Path Validation */
+int			ftp_validate_path(char *root, char *path);
+
+/* Command Utils */
+void		ftp_get_cwd(char **cwd);
+char		*ftp_get_path(t_server *s, char *args);
 
 #endif /* FTP_SERVER_H */

@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/14 10:02:54 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 19:34:06 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/15 18:19:47 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,24 +33,6 @@ int		ftp_handle_user_commands(int sock)
     ft_memdel((void *)&tmp);
 
     return (ftp_run_command(sock, buf));
-
-
-/*         // Send user input to server
-    if (ftp_send_data(sockfd, buf) < 1)
-        break;
-
-    // Read response
-    ft_memset(buf, 0, MAX_MSGSIZE + 1);
-    if ((n = ftp_recv_data(sockfd, &buf)) == 0) // 0 Bytes from server... ? Disconnected?
-        break;
-
-    // If there is a response, print out response
-    if (n > 0)
-    {
-        printf("client: received '%s'\n",buf);
-        if (strcmp(buf, "quit") == 0)
-            break;
-    } */
 }
 
 int		ftp_run_command(int sock, char *buf)
@@ -74,6 +56,8 @@ int		ftp_run_command(int sock, char *buf)
         rv = ftp_pwd(sock, full_cmd);
     else if (ft_strcmp(cmd, "quit") == 0)
         rv = ftp_quit(sock);
+	else if (ft_strcmp(cmd, "menu") == 0 || ft_strcmp(cmd, "help") == 0)
+		rv = ftp_print_client_menu();
 	else
 		ftp_error(ERR_WARN, "Unrecognised command");
     ft_memdel((void **)&full_cmd);

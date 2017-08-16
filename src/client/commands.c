@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/14 09:59:43 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/15 01:15:18 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/16 12:04:04 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,20 @@ int     ftp_put(int sock, char *cmd)
     ftp_error(ERR_INFO, "Put file onto server");
     // Send command
     rv = ftp_send_data(sock, cmd, ft_strlen(cmd));
+
+// CLIENT
+	// Validate local file
+	// Setup pipe fds
+	// Create child process
+	// -- CHILD --
+	//		Close pipe[0]
+	//		dup2(pipe[1], STDOUT_FILENO)
+	//		run xxd on filepath
+	// -- PARENT --
+	//		close pipe[1]
+	//		while ((rv = read(pipe[0]), buf, MAX_DATASIZE) > 0)
+	//			ftp_send_data(serverSock, buf, rv)
+
 	return (rv);
 }
 

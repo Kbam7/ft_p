@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 12:31:41 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 21:58:45 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/15 18:52:05 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-int     ftp_bind_socket(int sock, struct sockaddr *addr, socklen_t addrlen);
+void	ftp_get_listening_socket(int *sock, char *port);
+int		ftp_create_socket(struct addrinfo *p);
+void	init_func(t_server *server);
 
 /* Initialises server - Basically creates listening socket */
 void	init_server(t_server *server, int ac, char **av)
@@ -22,15 +24,7 @@ void	init_server(t_server *server, int ac, char **av)
     struct sigaction	sa;
 	char				*tmp;
 
-	tmp = getcwd(NULL, 0);
-	server->i.root_path = ft_strjoin(tmp, "/");
-	ft_memdel((void **)&tmp);
-	server->i.pwd = ft_strdup("/");
-	// Initialises array
-	int i = -1;
-	while (++i < MAX_CLIENTS)
-		server->client_array[i] = NULL;
-	server->i.n_clients = 0;
+	init_func(server);
 
 	// Setup socket
 	server->i.port = (ac < 2) ? PORT : av[1];
@@ -44,6 +38,21 @@ void	init_server(t_server *server, int ac, char **av)
     sa.sa_flags = SA_RESTART;
     if (sigaction(SIGCHLD, &sa, NULL) == -1)
         ftp_error(ERR_FATAL, "sigaction: Could not set handler for SIGCHLD");
+}
+
+void	init_func(t_server *server)
+{
+	char	*tmp;
+	int		i;
+
+	i = -1;
+	tmp = getcwd(NULL, 0);
+	server->i.root_path = ft_strjoin(tmp, "/");
+	ft_memdel((void **)&tmp);
+	server->i.pwd = ft_strdup("/");
+	while (++i < MAX_CLIENTS)
+		server->client_array[i] = NULL;
+	server->i.n_clients = 0;
 }
 
 /* Handles listening-socket creation. Listening-socket is used for new client connections */
@@ -85,18 +94,11 @@ int		ftp_create_socket(struct addrinfo *p)
         ftp_error(ERR_WARN, "socket: Unable to create socket");
     else if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0)
         ftp_error(ERR_WARN, "setsockopt: Unable to configure socket options");
-    else
-        return (ftp_bind_socket(sock, p->ai_addr, p->ai_addrlen));
-    return (-1);
-}
-
-/* Binds a socket to specified address */
-int ftp_bind_socket(int sock, struct sockaddr *addr, socklen_t addrlen)
-{
-    if (bind(sock, addr, addrlen) == -1) {
-        close(sock);            
+    else {
+        if (bind(sock, p->ai_addr, p->ai_addrlen) != -1)
+			return (sock);
+		close(sock);            
         ftp_error(ERR_WARN, "bind: Unable to bind");
-        return (-1);
-    }
-    return (sock);
+	}
+    return (-1);
 }

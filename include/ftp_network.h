@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 19:01:49 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/15 01:13:29 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/16 11:08:51 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # define MAX_MSGSIZE	4096
 # define MAX_DATASIZE	(MAX_MSGSIZE * 4 < 16384) ? MAX_MSGSIZE * 4 : 16384
 
+# define UNIVERSAL_ANSWER	42
 # define UNAUTHORISED_AREA	"You cannot access that stuff!"
 
 // get sockaddr, IPv4 or IPv6:

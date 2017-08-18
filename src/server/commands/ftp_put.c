@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 16:48:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 14:42:59 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/18 15:07:41 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,11 @@ ft_fprintf(2, "reading hex data from client: start\n");	// debug
 						break;
 				//ft_printf("rv: '%d'    data_len: '%d'\n", rv, ft_strlen(data));	// debug
 					ft_fprintf(2, "Received data:\n'%s'\n", data);	// debug
+
+
+					/* if ((rv = send(sock, "1", 1, 0)) < 1)
+						return (rv); */
+
 					if (ft_strstr(data, FTP_DATA_END_KEY))
 					{
 						char	*tmp;
@@ -75,13 +80,14 @@ ft_fprintf(2, "reading hex data from client: start\n");	// debug
 							/* ft_memset(data, 0, rv + 1);
 							ft_memcpy(data, data + len, rv - len); */
 
-				//ft_printf("writing excess data to pipe: data:'%s'\n", tmp); // debug
+				ft_fprintf(2, "writing excess data to pipe: data:'%s'\n", tmp); // debug
 
 							write(fds[1], tmp, ft_strlen(tmp));
 							ft_memdel((void **)&tmp);
 						}
 						break;
 					}
+
 //ft_fprintf(2, "writing data to pipe: rv: '%i'\n'%s'\n", rv, data); // debug
 					write(fds[1], data, rv);
 ft_fprintf(2, "finished writing data to pipe\n");	// debug

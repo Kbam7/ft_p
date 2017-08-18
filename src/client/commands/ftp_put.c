@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 14:23:46 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/18 15:07:48 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,13 @@ int		ftp_put_write_parent(int sock, int fd, off_t fsize, char (*data)[])
 
 	//ftp_error(ERR_INFO, "write_parent - data sent"); // debug
 
-			ft_memset(*data, 0, rv + 1);
+			ft_memset(*data, 0, MAX_DATASIZE + 1);
+
+			/* if ((rv = ftp_recv_data(sock, data)) < 1)
+				break;
+			if (ft_strcmp(*data, "1") != 0 && (rv = -1) == -1)
+				break;
+			ft_memset(*data, 0, MAX_DATASIZE + 1); */
 		}
 	}
 	ft_memdel((void **)&size);

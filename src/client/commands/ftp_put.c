@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_put.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 10:56:14 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/18 12:12:55 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@ int		ftp_put_write_parent(int sock, int fd, off_t fsize, char (*data)[])
 ftp_error(ERR_INFO, "write_parent - strt"); // debug
 	rv = 0;
 	size = ft_itoa(fsize);
+
+ft_printf("sending size: size: '%s'\n", size);	// debug
+
 	if (ftp_send_data(sock, size, ft_strlen(size)) > 1) {
 		while ((rv = read(fd, data, MAX_DATASIZE)) > 0) {
 
@@ -35,11 +38,11 @@ ftp_error(ERR_INFO, "write_parent - strt"); // debug
 	}
 	ft_memdel((void **)&size);
 	close(fd);
-	if (rv < 1) {
+	if (rv < 0) {
 		ft_memset(*data, 0, 25);
 		ft_memcpy(*data, "failed to send file data", 24);
 	}
-
+	ftp_send_data(sock, FTP_DATA_END, ft_strlen(FTP_DATA_END));
 ftp_error(ERR_INFO, "write_parent - end"); // debug
 	return (rv);
 }

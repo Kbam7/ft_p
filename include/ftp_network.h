@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_network.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 19:01:49 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/17 10:14:42 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/18 12:04:46 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 
 # define UNIVERSAL_ANSWER	42
 # define UNAUTHORISED_AREA	"You cannot access that stuff!"
+# define FTP_DATA_END		"!@#$%^&*(ft_p:DATA_END_KEY)*&^%$#@!"
 
 // get sockaddr, IPv4 or IPv6:
 void	*get_in_addr(struct sockaddr *sa);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_put.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 16:48:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 10:57:38 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/18 12:07:34 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@ int		ftp_put_write(int sock, int fd, char *filepath)
 	pid_t	pid;
 	int		rv;
 	int read = 1;
-	struct stat	st;
+	//struct stat	st;
 	off_t	fsize;
+	off_t	curr_size;
 
 	if (pipe(fds) == 0) {
 		if ((pid = fork()) == 0) {
@@ -40,25 +41,38 @@ int		ftp_put_write(int sock, int fd, char *filepath)
 			close(fds[0]);
 			ft_memset(data, 0, MAX_DATASIZE + 1);
 			if ((rv = ftp_recv_data(sock, &data)) > 0) {
-				fsize = ft_atoi(data);
+
+ft_printf("size receieved: '%s'\n", data);	// debug
+			curr_size = 0;
+			fsize = ft_atoi(data);
+			//fsize = 5014;
+
+ft_printf("size cnvtd1: '%i'\n", fsize);	// debug
+
 				ft_memset(data, 0, rv + 1);
 			
+ft_printf("size cnvtd2: '%i'\n", fsize);	// debug
+
 ft_printf("reading hex data from client: start\n");	// debug
 
 				while ( read ) {
-					if ((rv = ftp_recv_data(sock, &data)) > 0) {
-	ft_fprintf(2,"writing data to pipe: '%s'\n", data);	// debug
-
+					if ((rv = ftp_recv_data(sock, &data)) < 1)
+						break;
+					if (ft_strcmp(FTP_DATA_END, data) == 0)
+						break;
+					ft_fprintf(2, "writing data to pipe: rv: '%i'\n'%s'\n", rv, data); // debug
 					write(fds[1], data, rv);
-
-	ft_printf("finished writing data to pipe\n");	// debug
-				
+ft_printf("finished writing data to pipe\n");	// debug
 					ft_memset(data, 0, rv + 1);
-					}
-					if (lstat(filepath, &st) != 0)
-						
-					if (fsize >= st.st_size)
-						read = 0;
+
+					curr_size += rv;
+					//if (lstat(filepath, &st) != 0 && (rv = -1))
+						//break;
+					//if (curr_size >= fsize)
+					//	read = 0;
+
+ft_printf("size check: rv: '%i' curr_size: '%i'    fsize: '%i'\n", rv, curr_size, fsize);	// debug
+
 				}
 			}
 			close(fds[1]);

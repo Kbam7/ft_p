@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 19:01:49 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 12:04:46 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/18 13:36:23 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@
 # define MAX_MSGSIZE	4096
 # define MAX_DATASIZE	(MAX_MSGSIZE * 4 < 16384) ? MAX_MSGSIZE * 4 : 16384
 
-# define UNIVERSAL_ANSWER	42
-# define UNAUTHORISED_AREA	"You cannot access that stuff!"
-# define FTP_DATA_END		"!@#$%^&*(ft_p:DATA_END_KEY)*&^%$#@!"
+# define UNIVERSAL_ANSWER		42
+# define UNAUTHORISED_AREA		"You cannot access that stuff!"
+# define FTP_DATA_END_KEY		"!@#$%^&*(ft_p:DATA_END_KEY)*&^%$#@!"
 
 // get sockaddr, IPv4 or IPv6:
 void	*get_in_addr(struct sockaddr *sa);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 17:53:34 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/17 08:59:13 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/18 15:22:00 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,6 @@ char	*ftp_get_path(t_server *s, char *args)
 {
 	char	*tmp;
 
-ft_putendl("ftp_get_path() - strt");
-ft_putendl(args);
-
 	// root
  	if (ft_strcmp(args, "/") == 0)
 		tmp = ft_strdup(s->i.root_path);
@@ -38,9 +35,5 @@ ft_putendl(args);
 	else {// relative to pwd
 		tmp = ft_strjoinstr(s->i.root_path, s->i.pwd + 1, args);
 	}
-
-ft_putendl(tmp);
-ft_putendl("ftp_get_path() - end");
-
 	return (tmp);
 }

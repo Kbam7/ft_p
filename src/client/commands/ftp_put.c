@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 15:07:48 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/18 15:35:16 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,31 +17,13 @@ int		ftp_put_write_parent(int sock, int fd, off_t fsize, char (*data)[])
 	int		rv;
 	char	*size;
 
-//ftp_error(ERR_INFO, "write_parent - strt"); // debug
 	rv = 0;
 	size = ft_itoa(fsize);
-
-//ft_printf("sending size: size: '%s'\n", size);	// debug
-
 	if (ftp_send_data(sock, size, ft_strlen(size)) > 1) {
 		while ((rv = read(fd, data, MAX_DATASIZE)) > 0) {
-
-	//ftp_error(ERR_INFO, "write_parent - reading"); // debug
-
-	//ft_printf("data: '%s'\n", data);	// debug
-
 			if ((rv = ftp_send_data(sock, *data, rv)) < 1)
 				break;
-
-	//ftp_error(ERR_INFO, "write_parent - data sent"); // debug
-
 			ft_memset(*data, 0, MAX_DATASIZE + 1);
-
-			/* if ((rv = ftp_recv_data(sock, data)) < 1)
-				break;
-			if (ft_strcmp(*data, "1") != 0 && (rv = -1) == -1)
-				break;
-			ft_memset(*data, 0, MAX_DATASIZE + 1); */
 		}
 	}
 	ft_memdel((void **)&size);
@@ -49,9 +31,9 @@ int		ftp_put_write_parent(int sock, int fd, off_t fsize, char (*data)[])
 	if (rv < 0) {
 		ft_memset(*data, 0, 25);
 		ft_memcpy(*data, "failed to send file data", 24);
-	}
+	} else
+		rv = 1;
 	ftp_send_data(sock, FTP_DATA_END_KEY, ft_strlen(FTP_DATA_END_KEY));
-//ftp_error(ERR_INFO, "write_parent - end"); // debug
 	return (rv);
 }
 
@@ -113,20 +95,16 @@ int     ftp_put(int sock, char *cmd)
 			ft_memset(data, 0, MAX_DATASIZE + 1);
 			if ((rv = ftp_send_data(sock, cmd, ft_strlen(cmd))) < 1)
 				return (rv);
-
-//ft_printf("receiving initial response\n");	// debug
-
 			if ((rv = ftp_recv_data(sock, &data)) < 1)
 				return (rv);
-
-//ft_printf("received : '%s'\n", data); // debug
-
 			if (ft_strncmp(data, "overwrite", 9) == 0)
 				rv = ftp_put_confirm_overwrite(sock, &data);
 			if (rv > 0 && ft_strncmp(data, "writing", 7) == 0)
 				rv = ftp_put_handle_write(sock, cmd + 4, &data);
 			if (rv < 1 || ft_strncmp(data, "failed", 6) == 0)
 				ftp_error(ERR_WARN, data);
+			else
+				ftp_error(ERR_INFO, "File sent");
 		} else 
 			ftp_error(ERR_WARN, "File type not supported");
 	} else

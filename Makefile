@@ -6,7 +6,7 @@
 #    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/17 12:35:16 by kbamping          #+#    #+#              #
-#    Updated: 2017/08/15 18:44:41 by kbam7            ###   ########.fr        #
+#    Updated: 2017/08/17 08:57:58 by kbam7            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,8 +16,10 @@ CLIENT		= client
 SRC_PATH	= ./src
 SVR_PATH	= $(SRC_PATH)/server
 CLT_PATH	= $(SRC_PATH)/client
+NTWRK_PATH	= $(SRC_PATH)/network
 
-GLOBAL_SRCS	=	$(SRC_PATH)/ftp_errors.c $(SRC_PATH)/ftp_network.c
+GLOBAL_SRCS	=	$(NTWRK_PATH)/ftp_errors.c $(NTWRK_PATH)/ftp_network.c		\
+				$(NTWRK_PATH)/ftp_filecheck.c								
 
 SVR_SRCS	=	$(SVR_PATH)/server.c $(SVR_PATH)/server_init.c				\
 				$(SVR_PATH)/server_signals.c $(SVR_PATH)/connect.c			\
@@ -33,8 +35,14 @@ SVR_SRCS	=	$(SVR_PATH)/server.c $(SVR_PATH)/server_init.c				\
 				$(GLOBAL_SRCS)
 
 CLT_SRCS	= 	$(CLT_PATH)/client.c $(CLT_PATH)/client_init.c				\
-				$(CLT_PATH)/commands.c $(CLT_PATH)/command_handlers.c		\
 				$(CLT_PATH)/ftp_client_ui.c									\
+				$(CLT_PATH)/commands/command_handlers.c						\
+				$(CLT_PATH)/commands/ftp_cd.c								\
+				$(CLT_PATH)/commands/ftp_get.c								\
+				$(CLT_PATH)/commands/ftp_ls.c								\
+				$(CLT_PATH)/commands/ftp_put.c								\
+				$(CLT_PATH)/commands/ftp_pwd.c								\
+				$(CLT_PATH)/commands/ftp_quit.c								\
 				$(GLOBAL_SRCS)
 
 SVR_OBJS	= $(SVR_SRCS:%.c=%.o)

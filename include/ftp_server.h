@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_server.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 10:47:37 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/16 15:10:56 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/17 10:07:17 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int     	ftp_pwd(t_server *s, int sock, char *args);
 int     	ftp_quit(void);
 
 /* Path Validation */
-int			ftp_validate_path(char *root, char *path);
+char		*ftp_validate_path(char *root, char *path);
 
 /* Command Utils */
 void		ftp_get_cwd(char **cwd);

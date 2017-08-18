@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 19:38:23 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/15 18:22:24 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/17 10:16:42 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,21 @@
 
 int main(int argc, char *argv[])
 {
-    int sock;
+    int			sock;
+	t_session	sess;
 
     if (argc < 2 || argc > 3)
         ftp_error(ERR_FATAL, "usage: client hostname port\n");
     if (argc < 3) {
         ftp_error(ERR_WARN,"Using default port ("PORT")\n");
-        ftp_init_client(&sock, argv[1], PORT);
+        sess.port = PORT;
     } else
-        ftp_init_client(&sock, argv[1], argv[2]);
-
+        sess.port = argv[2];
+	ftp_init_client(&sess, &sock, argv[1]);
+	sess.socket = sock;
     while (1) {
         ftp_print_prompt();
-        if (ftp_handle_user_commands(sock) == -1)
+        if (ftp_handle_user_commands(&sess) == -1)
 			break;
     }
     ftp_error(ERR_INFO, "Closing client...");

@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/13 18:26:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/15 18:21:03 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/17 10:18:00 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,18 @@
 #include "ftp_network.h"
 #include "ftp_errors.h"
 
-void    ftp_init_client(int *sock, char *addr, char *port);
-int     ftp_connect(struct addrinfo *p);
+typedef struct	s_ftp_session
+{
+	int				socket;
+	struct in_addr	*address;
+	char			*port;
+	char			*root_path;
+}				t_session;
+
+void    ftp_init_client(t_session *s, int *sock, char *addr);
 
 /* Server Interaction */
-int		ftp_handle_user_commands(int sock);
-int		ftp_run_command(int sock, char *buf);
-char    *ftp_build_command(char *buf, char **cmd);
+int		ftp_handle_user_commands(t_session *s);
 
 /* Commands */
 int     ftp_ls(int sock, char *cmd);

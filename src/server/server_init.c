@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_init.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 12:31:41 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/16 13:22:50 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/18 10:24:14 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	init_server(t_server *server, int ac, char **av)
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
     if (sigaction(SIGCHLD, &sa, NULL) == -1)
-        ftp_error(ERR_FATAL, "sigaction: Could not set handler for SIGCHLD");
+        ftp_error(ERR_FATAL, "sigaction: Could not set handler for SIGCHLD"); 
 }
 
 void	init_func(t_server *server)
@@ -86,14 +86,18 @@ int		ftp_create_socket(struct addrinfo *p)
 {
     int sock;
     int yes;
+	//struct timeval	tv;
 
+	//tv.tv_sec = 1;
+	//tv.tv_usec = 0;
     yes = 1;
     sock = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
     if (sock == -1)
         ftp_error(ERR_WARN, "socket: Unable to create socket");
-    else if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0)
-        ftp_error(ERR_WARN, "setsockopt: Unable to configure socket options");
     else {
+		setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+		//setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
+		//setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(struct timeval));
         if (bind(sock, p->ai_addr, p->ai_addrlen) != -1)
 			return (sock);
 		close(sock);            

@@ -6,7 +6,7 @@
 /*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 12:29:32 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/14 16:49:37 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/18 10:22:39 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ t_client	*ftp_accept_client(t_server *server)
 		ftp_error(ERR_WARN, "accept: Unable to accept client");
 		return (NULL);
 	}
+/* 	setsockopt(clt->socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv));
+	setsockopt(clt->socket, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(tv)); */
 	clt->address = (struct in_addr *)get_in_addr((struct sockaddr *)&clt_addr);
 	msg = ft_strjoin("server: got connection from ", inet_ntoa(*(clt->address)));
 	ftp_error(ERR_INFO, msg);

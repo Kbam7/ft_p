@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 16:48:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 14:25:57 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/18 14:38:23 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,15 @@ int		ftp_put_write(int sock, char *filepath)
 			
 //ft_printf("size cnvtd2: '%i'\n", fsize);	// debug
 
-//ft_printf("reading hex data from client: start\n");	// debug
+ft_fprintf(2, "reading hex data from client: start\n");	// debug
 
 				while ( read ) {
 					if ((rv = ftp_recv_data(sock, &data)) < 1)
 						break;
 				//ft_printf("rv: '%d'    data_len: '%d'\n", rv, ft_strlen(data));	// debug
-					if (ft_strstr(data, FTP_DATA_END_KEY)) {
+					ft_fprintf(2, "Received data:\n'%s\n", data);	// debug
+					if (ft_strstr(data, FTP_DATA_END_KEY))
+					{
 						char	*tmp;
 						int len = ft_strlen(FTP_DATA_END_KEY);
 
@@ -89,7 +91,7 @@ int		ftp_put_write(int sock, char *filepath)
 				}
 			}
 			close(fds[1]);
-//ft_printf("reading hex data from client: end\n");	// debug
+ft_fprintf(2, "reading hex data from client: end\n");	// debug
 			return (rv);
 		}
 	}

@@ -1,64 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ftp_get.c                                          :+:      :+:    :+:   */
+/*   ftp_mget.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/19 18:09:48 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/19 18:02:21 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp_client.h"
 
-int		ftp_get_write(int sock, char *filepath)
+int     ftp_mget(int sock, char *cmd)
 {
-	int		fds[2];
-	pid_t	pid;
-	int		rv;
+	t_split_string	sp;
+	size_t			i;
+	int				rv;
+	char			*tmp;
 
-	if (pipe(fds) == 0) {
-		if ((pid = fork()) == 0) {
-			close(fds[1]);
-			dup2(fds[0], STDIN_FILENO);
-			close(fds[0]);
-			execl("/usr/bin/xxd", "xxd", "-r", "-", filepath, (char *)NULL);
-			exit(EXIT_FAILURE);
-		}  else if (pid > 0) {
-			close(fds[0]);
-			rv = ftp_write_from_socket(sock, fds[1]);
-			close(fds[1]);
-			return (rv);
+	rv = 1;
+	sp = ft_nstrsplit(cmd, ' ');
+	if (sp.words > 1)
+	{
+		i = 0;
+		while (rv && ++i < sp.words)
+		{
+			tmp = ft_strjoin("get ", sp.strings[i]);
+			if (ftp_get(sock, tmp) < 1)
+				rv = 0;
+			ft_memdel((void **)&tmp);
 		}
 	}
-	return (0);
-}
-
-int		ftp_validate_overwrite(char *path)
-{
-	char	*line;
-	int		rv;
-	char	*tmp;
-
-	rv = 0;
-	tmp = ft_strjoinstr("'", path, "' already exists!\nOverwrite? [yes/no]");
-	ftp_error(ERR_INFO, tmp);
-	ft_memdel((void **)&tmp);
-	if (ft_gnl(STDIN_FILENO, &line) > 0) {
-		if (ft_strcmp(line, "yes") == 0)
-			rv = 1;
-		ft_memdel((void **)&line);
-	}
+	ft_free_split(&sp);
 	return (rv);
 }
 
-int     ftp_get(int sock, char *cmd) {
+/*
+
 	int		rv;
 	char	data[MAX_DATASIZE + 1];
 
 	rv = 1;
-	if (!ftp_file_exists(cmd + 4) || ftp_validate_overwrite(cmd + 4))
+	if (!ftp_file_exists(cmd + 4) || ftp_validate_overwrite())
 	{
 		if ((rv = ftp_send_data(sock, cmd, ft_strlen(cmd))) > 0)
 		{
@@ -74,4 +58,5 @@ int     ftp_get(int sock, char *cmd) {
 		}
 	}
 	return (rv);
-}
+
+*/

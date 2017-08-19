@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+         #
+#    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/17 12:35:16 by kbamping          #+#    #+#              #
-#    Updated: 2017/08/17 08:57:58 by kbam7            ###   ########.fr        #
+#    Updated: 2017/08/19 17:57:03 by kbamping         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,15 +34,15 @@ SVR_SRCS	=	$(SVR_PATH)/server.c $(SVR_PATH)/server_init.c				\
 				$(SVR_PATH)/commands/validate_path.c						\
 				$(GLOBAL_SRCS)
 
-CLT_SRCS	= 	$(CLT_PATH)/client.c $(CLT_PATH)/client_init.c				\
-				$(CLT_PATH)/ftp_client_ui.c									\
-				$(CLT_PATH)/commands/command_handlers.c						\
-				$(CLT_PATH)/commands/ftp_cd.c								\
-				$(CLT_PATH)/commands/ftp_get.c								\
-				$(CLT_PATH)/commands/ftp_ls.c								\
-				$(CLT_PATH)/commands/ftp_put.c								\
-				$(CLT_PATH)/commands/ftp_pwd.c								\
-				$(CLT_PATH)/commands/ftp_quit.c								\
+CLT_SRCS	= 	$(CLT_PATH)/client.c $(CLT_PATH)/client_init.c					\
+				$(CLT_PATH)/ftp_client_ui.c										\
+				$(CLT_PATH)/commands/command_handlers.c							\
+				$(CLT_PATH)/commands/ftp_cd.c $(CLT_PATH)/commands/ftp_lcd.c	\
+				$(CLT_PATH)/commands/ftp_get.c $(CLT_PATH)/commands/ftp_mget.c	\
+				$(CLT_PATH)/commands/ftp_ls.c $(CLT_PATH)/commands/ftp_lls.c	\
+				$(CLT_PATH)/commands/ftp_put.c $(CLT_PATH)/commands/ftp_mput.c	\
+				$(CLT_PATH)/commands/ftp_pwd.c $(CLT_PATH)/commands/ftp_lpwd.c	\
+				$(CLT_PATH)/commands/ftp_quit.c									\
 				$(GLOBAL_SRCS)
 
 SVR_OBJS	= $(SVR_SRCS:%.c=%.o)

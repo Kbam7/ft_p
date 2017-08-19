@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/19 16:46:23 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/19 18:08:30 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,17 +38,17 @@ int		ftp_put_handle_write(int sock, char *path, char (*data)[])
 	return (0);
 }
 
-int		ftp_put_confirm_overwrite(int sock, char (*data)[])
+int		ftp_put_confirm_overwrite(int sock, char (*data)[], char *path)
 {
 	char	*line;
 	int		rv;
 	int		rv2;
+	char	*tmp;
 
-	ftp_error(ERR_INFO, "File already exists!\nOverwrite? [yes/no]");
+	tmp = ft_strjoinstr("'", path, "' already exists!\nOverwrite? [yes/no]");
+	ftp_error(ERR_INFO, tmp);
+	ft_memdel((void **)&tmp);
 	ft_memset(*data, 0, MAX_DATASIZE + 1);
-/* 	if ((rv2 = ftp_recv_data(sock, data)) < 1)
-		return (rv2);
-	ft_putendl(*data); */
 	if (ft_gnl(STDIN_FILENO, &line) > 0) {
 		rv = (ft_strcmp(line, "yes") == 0) ? 1 : 0;
 		rv2 = ftp_send_data(sock, line, ft_strlen(line));
@@ -78,7 +78,7 @@ int     ftp_put(int sock, char *cmd)
 			if ((rv = ftp_recv_data(sock, &data)) < 1)
 				return (rv);
 			if (ft_strncmp(data, "overwrite", 9) == 0)
-				rv = ftp_put_confirm_overwrite(sock, &data);
+				rv = ftp_put_confirm_overwrite(sock, &data, cmd + 4);
 			if (rv > 0 && ft_strncmp(data, "writing", 7) == 0)
 				rv = ftp_put_handle_write(sock, cmd + 4, &data);
 			if (rv < 1 || ft_strncmp(data, "failed", 6) == 0)

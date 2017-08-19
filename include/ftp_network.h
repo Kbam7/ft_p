@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 19:01:49 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 13:36:23 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/19 14:36:56 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,11 @@
 # define UNAUTHORISED_AREA		"You cannot access that stuff!"
 # define FTP_DATA_END_KEY		"!@#$%^&*(ft_p:DATA_END_KEY)*&^%$#@!"
 
-// get sockaddr, IPv4 or IPv6:
 void	*get_in_addr(struct sockaddr *sa);
 int		ftp_send_data(int sock, char *data, int len);
 int		ftp_recv_data(int sock, char (*data)[]);
+int		ftp_write_from_socket(int sock, int fd);
+int		ftp_read_fd_write_sock(int fd, int sock);
 
 /* Filecheck */
 int			ftp_is_reglr_file(const char *path);

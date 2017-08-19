@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_server.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 10:47:37 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/17 10:07:17 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/19 13:43:17 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void		ftp_disconnect_client(t_server *server, unsigned int i_client);
 void    	ftp_handle_client(t_server *server, t_client *client);
 
 /* Server Commands */
-int     	ftp_ls(t_server *s, int sock, char *args);
+int     	ftp_ls(t_server *s, int sock, char *buf);
 int     	ftp_cd(t_server *s, int sock, char *args);
 int     	ftp_get(t_server *s, int sock, char *args);
 int     	ftp_put(t_server *s, int sock, char *args);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_network.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/16 10:49:33 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 17:53:06 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/19 14:40:30 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,67 +40,77 @@ int	check_recv_rv(int rv)
 int ftp_send_data(int sock, char *data, int len)
 {
     int     rv;
-	//char	buf[2];
 
-//ftp_error(ERR_WARN, "send data - start");	// debug
-
-/* 	// Send length of data
-	if ((rv = send(sock, ft_itoa(len), UNIVERSAL_ANSWER, 0)) < 1)
-		return (check_send_rv(rv)); */
-
-//ftp_error(ERR_WARN, "send data - waiting for confirmation");	// debug
-
-/* 	// Wait for confirmation
-	ft_memset(buf, 0, 2);
-	if ((rv = recv(sock, buf, 1, 0)) < 1)
+	if ((rv = send(sock, data, len, 0)) < 1)
 		return (check_send_rv(rv));
- */
-//ftp_error(ERR_WARN, "send data - confirmation received");	// debug
-
-	// Validate confirmation
-/* 	if (ft_strcmp(buf, "1") == 0) { */
-
-//ftp_error(ERR_WARN, "send data - Valid confirmtion, sending data");	// debug
-
-		if ((rv = send(sock, data, len, 0)) < 1)
-			return (check_send_rv(rv));
-	/* } else
-		return (-1); */
-
-//ftp_error(ERR_WARN, "send data - end");	// debug
-
     return (rv);
 }
 
 int ftp_recv_data(int sock, char (*data)[])
 {
     int     rv;
-	//int		len;
-	//char	buf[UNIVERSAL_ANSWER + 1];
-    
-//ftp_error(ERR_WARN, "recv data - start");	// debug
 
-	//ft_memset(buf, 0, UNIVERSAL_ANSWER + 1);
-	// Read MAX_MSGSIZE bytes, expecting length of data
-/*     if ((rv = recv(sock, buf, UNIVERSAL_ANSWER, 0)) < 1)
-        return (check_recv_rv(rv));
-	if (ft_isint(buf) && (len = ft_atoi(buf)) > 0 && len <= MAX_DATASIZE) {
-		// Send confirmation
-		if ((rv = send(sock, "1", 1, 0)) < 1)
-			return (check_recv_rv(rv));
- */
-//ftp_error(ERR_WARN, "recv data - confirmation sent, reading data");	// debug
-
-		// Read length bytes from socket
-		if ((rv = recv(sock, *data, MAX_DATASIZE, 0)) < 1)
-        	return (check_recv_rv(rv));
-/* 	} else {
-		// Invalid datasize
-		if ((rv = send(sock, "0", 1, 0)) < 1)
-			return (check_recv_rv(rv));
-		return (-1);// Invalid datasize
-	} */
-//ftp_error(ERR_WARN, "recv data - end");	// debug
-
+	// Read length bytes from socket
+	if ((rv = recv(sock, *data, MAX_DATASIZE, 0)) < 1)
+		return (check_recv_rv(rv));
     return (rv);
+}
+
+void	ftp_extract_data(int fd, char (*data)[])
+{
+	int 	offset;
+	int 	rem;
+	int		keylen;
+	char	*tmp;
+	
+	rem = ft_strlen(ft_strstr(*data, FTP_DATA_END_KEY));
+	keylen = ft_strlen(FTP_DATA_END_KEY);
+	offset = ft_strlen(*data) - rem;
+	if (offset > 0) {
+		tmp = ft_strsub(*data, 0, offset);
+		write(fd, tmp, ft_strlen(tmp));
+		ft_memdel((void **)&tmp);
+	}
+	tmp = ft_strsub(*data, offset + keylen, rem - keylen);
+	write(fd, tmp, ft_strlen(tmp));
+	ft_memdel((void **)&tmp);
+}
+
+int		ftp_write_from_socket(int sock, int fd)
+{
+	char    data[MAX_DATASIZE + 1];
+	int		rv;
+
+	ft_memset(data, 0, MAX_DATASIZE + 1);
+	while (1) {
+		if ((rv = ftp_recv_data(sock, &data)) < 1)
+			break;
+		if (ft_strstr(data, FTP_DATA_END_KEY))
+		{
+			if (ft_strcmp(data, FTP_DATA_END_KEY) != 0)
+				ftp_extract_data(fd, &data);
+			break;
+		}
+		write(fd, data, rv);
+		ft_memset(data, 0, rv + 1);
+	}
+	return (rv);
+}
+
+int		ftp_read_fd_write_sock(int fd, int sock)
+{
+	int		rv;
+	char data[MAX_DATASIZE + 1];
+
+	rv = 0;
+	ft_memset(data, 0, MAX_DATASIZE + 1);
+	while ((rv = read(fd, data, MAX_DATASIZE)) > 0) {
+		if ((rv = ftp_send_data(sock, data, rv)) < 1)
+			break;
+		ft_memset(data, 0, MAX_DATASIZE + 1);
+	}
+	ftp_send_data(sock, FTP_DATA_END_KEY, ft_strlen(FTP_DATA_END_KEY));
+	if (rv < 0)
+		return (rv);
+	return (1);
 }

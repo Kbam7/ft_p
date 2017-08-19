@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_handlers.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/14 10:02:54 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/17 10:20:05 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/19 13:11:46 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,24 @@
 char    *ftp_build_command(char *buf, char **cmd)
 {
     t_split_string  sp;
-    char            *ret;
-    
-    sp = ft_nstrsplit(buf, ' ');
-    *cmd = ft_strdup(sp.strings[0]);
+	char            *ret;
+	char            *tmp;
+	size_t			i;
+
+	i = 0;
+	sp = ft_nstrsplit(buf, ' ');
+	*cmd = ft_strdup(sp.strings[0]);
     if (sp.words < 2)
         ret = ft_strdup(sp.strings[0]);
-    else
-        ret = ft_strjoinstr(*cmd, " ", sp.strings[1]);
+    else {
+		ret = ft_strdup(sp.strings[0]);
+		while (++i < sp.words && sp.strings[i] != NULL)
+		{
+			tmp = ft_strjoinstr(ret, " ", sp.strings[i]);
+			ft_memdel((void **)&ret);
+			ret = tmp;
+		}
+	}
     ft_free_split(&sp);
     return (ret);
 }

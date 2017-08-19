@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 18:28:16 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/16 14:53:02 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/19 14:00:43 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,17 @@ int     ftp_handle_client_input(t_server *s, int sock)
         return (rv);
 
     // Print out data
-    ft_printf("Server received %d bytes: %s\n", rv, buf);
+    ft_printf("Server received %d bytes: '%s'  %d   len: %d\n", rv, buf, buf[0], ft_strlen(buf));
 
-    // Parse input
+	// Clear newline chars
+	buf[0] = (buf[0] == '\n') ? 0 : buf[0];
+	while (ft_strchr_end(buf, '\n') && (rv = ft_strlen(buf) - 1) > -1)
+		buf[rv] = 0;
+
+	if (ft_strlen(buf) < 1)
+		return (1);
+
+	// Parse input
     return (ftp_parse_input(s, sock, buf));
 }
 
@@ -62,14 +70,14 @@ int     ftp_parse_input(t_server *s, int sock, char *buf)
     t_split_string	sp;
     char			*args;
     int				rv;
-    
-    sp = ft_nstrsplit(buf, ' ');
-    if (sp.words < 2)
-        args = NULL;
+	
+	sp = ft_nstrsplit(buf, ' ');
+	if (sp.words < 2)
+		args = NULL;
     else
-        args = sp.strings[1];
-    if (ft_strcmp(sp.strings[0], "ls") == 0)
-        rv = ftp_ls(s, sock, args);
+		args = sp.strings[1];
+	if (ft_strcmp(sp.strings[0], "ls") == 0)
+        rv = ftp_ls(s, sock, buf);
     else if (ft_strcmp(sp.strings[0], "cd") == 0)
         rv = ftp_cd(s, sock, args);
     else if (ft_strcmp(sp.strings[0], "get") == 0)

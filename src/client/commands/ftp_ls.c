@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_ls.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/17 08:15:17 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/19 14:21:35 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,11 @@ int     ftp_ls(int sock, char *cmd)
     if ((rv = ftp_send_data(sock, cmd, ft_strlen(cmd))) < 1)
 		return (rv);
 	// Read and print out response
-	if ((rv = ftp_recv_data(sock, &data)) < 1)
+	/* if ((rv = ftp_recv_data(sock, &data)) < 1)
 		return (rv);
-	ft_putendl(data);
-	return (1);
+	ft_putendl(data); */
+
+	if ((rv = ftp_write_from_socket(sock, STDOUT_FILENO)) < 1)
+		ftp_error(ERR_INFO, "command failed");
+	return (rv);
 }

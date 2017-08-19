@@ -3,39 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_put.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/19 09:17:35 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/19 15:31:54 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp_client.h"
-
-int		ftp_put_write_parent(int sock, int fd, off_t fsize, char (*data)[])
-{
-	int		rv;
-	char	*size;
-
-	rv = 0;
-	size = ft_itoa(fsize);
-	if (ftp_send_data(sock, size, ft_strlen(size)) > 1) {
-		while ((rv = read(fd, data, MAX_DATASIZE)) > 0) {
-			if ((rv = ftp_send_data(sock, *data, rv)) < 1)
-				break;
-			ft_memset(*data, 0, MAX_DATASIZE + 1);
-		}
-	}
-	ft_memdel((void **)&size);
-	close(fd);
-	if (rv < 0) {
-		ft_memset(*data, 0, 25);
-		ft_memcpy(*data, "failed to send file data", 24);
-	} else
-		rv = 1;
-	ftp_send_data(sock, FTP_DATA_END_KEY, ft_strlen(FTP_DATA_END_KEY));
-	return (rv);
-}
 
 int		ftp_put_handle_write(int sock, char *path, char (*data)[])
 {
@@ -53,7 +28,9 @@ int		ftp_put_handle_write(int sock, char *path, char (*data)[])
 			exit(EXIT_FAILURE);
 		}  else if (pid > 0) {
 			close(fds[1]);
-			return (ftp_put_write_parent(sock, fds[0], st.st_size, data));
+			if (ftp_read_fd_write_sock(fds[0], sock) > 0 && close(fds[0]) < 1)
+				return (1);
+			close(fds[0]);
 		}
 	}
 	ft_memset(*data, 0, 25);
@@ -67,6 +44,7 @@ int		ftp_put_confirm_overwrite(int sock, char (*data)[])
 	int		rv;
 	int		rv2;
 
+	ftp_error(ERR_INFO, "overwrite");
 	ft_memset(*data, 0, MAX_DATASIZE + 1);
 	if ((rv2 = ftp_recv_data(sock, data)) < 1)
 		return (rv2);

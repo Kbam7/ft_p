@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 16:48:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/19 15:31:46 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/19 17:02:25 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,16 @@ int		ftp_validate_overwrite(int sock)
 
 	ftp_error(ERR_INFO, "overwrite");
 	ft_memset(buf, 0, MAX_DATASIZE + 1);
-	ftp_send_data(sock, "overwrite", 9);
-	ftp_send_data(sock, "File already exists!\nOverwrite? [yes/no]", 40);
-	ftp_recv_data(sock, &buf);
-	if (ft_strcmp(buf, "yes") == 0)
-		return (1);
+	if (ftp_send_data(sock, "overwrite", 9) > 0)
+	{
+		if (ftp_recv_data(sock, &buf) > 0)
+		{
+			if (ft_strcmp(buf, "yes") == 0)
+				return (1);
+			ftp_send_data(sock, "failed: Overwrite cancelled", 27);
+			return (0);
+		}
+	}
 	return (-1);
 }
 
@@ -57,10 +62,13 @@ int		ftp_put_handle_write(int sock, char *filepath)
 	rv = 1;
 	if (ftp_file_exists(filepath))
 		rv = ftp_validate_overwrite(sock);
-	if (rv < 0)
-		return (0);
-	if ((rv = ftp_put_write(sock, filepath)) > 0)
+	if (rv > 0)
+	{
+		if ((rv = ftp_put_write(sock, filepath)) > 0)
 		ftp_error(ERR_INFO, "File received");
+	}
+	else if (rv == 0)
+		rv = 1;
 	return (rv);
 }
 
@@ -73,7 +81,7 @@ int     ftp_put(t_server *s, int sock, char *args) {
 	if (args != NULL) {
 		tmp = ftp_get_path(s, args);
 		if ((path = ft_strdup(ftp_validate_path(s->i.root_path, tmp))) != NULL) {
-			if ((rv = ftp_put_handle_write(sock, path)) < 1)
+			if ((rv = ftp_put_handle_write(sock, path)) < 0)
 				rv = ftp_send_data(sock, "failed: Unable to put file", 26);
 		} else 
 			rv = ftp_send_data(sock, "failed: Invalid path", 20);

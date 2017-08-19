@@ -6,20 +6,19 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 16:48:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/19 15:34:29 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/19 16:42:57 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp_server.h"
 
-int		ftp_get_handle_write(int sock, char *path, char (*data)[])
+int		ftp_get_handle_write(int sock, char *path)
 {
 	int		fds[2];
 	pid_t	pid;
 	struct stat	st;
 
 	if (lstat(path, &st) == 0 && pipe(fds) == 0) {
-		ft_memset(*data, 0, MAX_DATASIZE + 1);
 		if ((pid = fork()) == 0) {
 			close(fds[0]);
 			dup2(fds[1], STDOUT_FILENO);
@@ -27,65 +26,45 @@ int		ftp_get_handle_write(int sock, char *path, char (*data)[])
 			execl("/usr/bin/xxd", "xxd", path, (char *)NULL);
 			exit(EXIT_FAILURE);
 		}  else if (pid > 0) {
+			ftp_send_data(sock, "writing", 7);
 			close(fds[1]);
 			if (ftp_read_fd_write_sock(fds[0], sock) > 0 && close(fds[0]) < 1)
 				return (1);
 			close(fds[0]);
 		}
 	}
-	ft_memset(*data, 0, 25);
-	ft_strcpy(*data, "failed to send file data");
 	return (0);
 }
 
-int		ftp_get_confirm_overwrite(int sock, char (*data)[])
+int     ftp_get(t_server *s, int sock, char *args)
 {
-	char	*line;
 	int		rv;
-	int		rv2;
+	char	*path;
+	char	*tmp;
 
-	ftp_error(ERR_INFO, "overwrite");
-	ft_memset(*data, 0, MAX_DATASIZE + 1);
-	if ((rv2 = ftp_recv_data(sock, data)) < 1)
-		return (rv2);
-	ft_putendl(*data);
-	if (ft_gnl(STDIN_FILENO, &line) > 0) {;
-		rv = (ft_strcmp(line, "yes") == 0) ? 1 : 0;
-		rv2 = ftp_send_data(sock, line, ft_strlen(line));
-		ft_memdel((void **)&line);
-		if (rv2 < 1)
-			return (rv2);
-	}
-	ft_memset(*data, 0, MAX_DATASIZE + 1);
-	if ((rv2 = ftp_recv_data(sock, data)) < 1)
-		return (rv2);
-	return (rv);
-}
-
-int     ftp_get(int sock, char *cmd)
-{
-	char    data[MAX_DATASIZE + 1];
-	int rv;
-
-	rv = 1;
-	if (ftp_file_exists(cmd + 4)) {
-		if (ftp_is_reglr_file(cmd + 4) || ftp_is_symlink(cmd + 4)) {
-			ft_memset(data, 0, MAX_DATASIZE + 1);
-			if ((rv = ftp_send_data(sock, cmd, ft_strlen(cmd))) < 1)
-				return (rv);
-			if ((rv = ftp_recv_data(sock, &data)) < 1)
-				return (rv);
-			if (ft_strncmp(data, "overwrite", 9) == 0)
-				rv = ftp_get_confirm_overwrite(sock, &data);
-			if (rv > 0 && ft_strncmp(data, "writing", 7) == 0)
-				rv = ftp_get_handle_write(sock, cmd + 4, &data);
-			if (rv < 1 || ft_strncmp(data, "failed", 6) == 0)
-				ftp_error(ERR_WARN, data);
+	if (args != NULL)
+	{
+		tmp = ftp_get_path(s, args);
+		path = ft_strdup(ftp_validate_path(s->i.root_path, tmp));
+		if (path != NULL)
+		{
+			if (ftp_is_reglr_file(path) || ftp_is_symlink(path))
+			{
+				if ((rv = ftp_get_handle_write(sock, path)) < 1)
+					rv = ftp_send_data(sock, "failed: Unable to get file", 26);
+				else
+					ftp_error(ERR_INFO, "File sent");
+			}
 			else
-				ftp_error(ERR_INFO, "File sent");
-		} else 
-			ftp_error(ERR_WARN, "File type not supported");
-	} else
-		ftp_error(ERR_WARN, "File not found");
-	return (rv);
+				rv = ftp_send_data(sock, "failed: Unsupported file type", 26);
+		}
+		else 
+			rv = ftp_send_data(sock, "failed: Invalid path", 20);
+		ft_memdel((void **)&tmp);
+		if (path != NULL)
+			ft_memdel((void **)&path);
+	}
+	else
+		rv = ftp_send_data(sock, "failed: No path found", 13);
+    return (rv);
 }

@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/19 15:31:54 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/19 16:46:23 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,20 @@ int		ftp_put_confirm_overwrite(int sock, char (*data)[])
 	int		rv;
 	int		rv2;
 
-	ftp_error(ERR_INFO, "overwrite");
+	ftp_error(ERR_INFO, "File already exists!\nOverwrite? [yes/no]");
 	ft_memset(*data, 0, MAX_DATASIZE + 1);
-	if ((rv2 = ftp_recv_data(sock, data)) < 1)
+/* 	if ((rv2 = ftp_recv_data(sock, data)) < 1)
 		return (rv2);
-	ft_putendl(*data);
-	if (ft_gnl(STDIN_FILENO, &line) > 0) {;
+	ft_putendl(*data); */
+	if (ft_gnl(STDIN_FILENO, &line) > 0) {
 		rv = (ft_strcmp(line, "yes") == 0) ? 1 : 0;
 		rv2 = ftp_send_data(sock, line, ft_strlen(line));
 		ft_memdel((void **)&line);
 		if (rv2 < 1)
 			return (rv2);
 	}
+	else
+		ftp_send_data(sock, "no", 2);
 	ft_memset(*data, 0, MAX_DATASIZE + 1);
 	if ((rv2 = ftp_recv_data(sock, data)) < 1)
 		return (rv2);

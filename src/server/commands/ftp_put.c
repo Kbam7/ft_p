@@ -3,24 +3,75 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_put.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 16:48:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 15:23:35 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/19 09:03:22 by kbam7            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp_server.h"
 
+void	ftp_extract_data(int fd, char (*data)[])
+{
+	int 	offset;
+	int 	rem;
+	int		keylen;
+	char	*tmp;
+	
+	rem = ft_strlen(ft_strstr(*data, FTP_DATA_END_KEY));
+	keylen = ft_strlen(FTP_DATA_END_KEY);
+	offset = ft_strlen(*data) - rem;
+	if (offset > 0) {
+		tmp = ft_strsub(*data, 0, offset);
+ft_fprintf(2, "Found chars before DATA_END_KEY: tmp:\n'%s'\n", tmp);	// debug
+		write(fd, tmp, ft_strlen(tmp));
+		ft_memdel((void **)&tmp);
+	}
+	tmp = ft_strsub(*data, offset + keylen, rem - keylen);
+
+ft_fprintf(2, "Found chars after DATA_END_KEY: tmp:\n'%s'\n", tmp);	// debug
+
+	write(fd, tmp, ft_strlen(tmp));
+	ft_memdel((void **)&tmp);
+}
+
+int		ftp_put_handle_parent(int sock, int fd)
+{
+	char    data[MAX_DATASIZE + 1];
+	int		rv;
+	
+	ft_memset(data, 0, MAX_DATASIZE + 1);
+	if ((rv = ftp_recv_data(sock, &data)) > 0) {
+		// save expected file size and check it after file is sent
+		//fsize = ft_atoi(data);
+		ft_memset(data, 0, rv + 1);
+		while ( 1 ) {
+			if ((rv = ftp_recv_data(sock, &data)) < 1)
+				break;
+			if (ft_strstr(data, FTP_DATA_END_KEY))
+			{
+ft_fprintf(2, "Found end key: data:\n'%s'\n", data);	// debug
+				if (ft_strcmp(data, FTP_DATA_END_KEY) != 0) {
+					// extract
+					ftp_extract_data(fd, &data);
+				}
+				ftp_error(ERR_INFO, "File received");
+				break;
+			}
+			write(fd, data, rv);
+ft_fprintf(2, "data: '%s'\n", data);	// debug
+			ft_memset(data, 0, rv + 1);
+		}
+	}
+	return (rv);
+}
+
 int		ftp_put_write(int sock, char *filepath)
 {
 	int		fds[2];
-	char    data[MAX_DATASIZE + 1];
 	pid_t	pid;
 	int		rv;
-	int read = 1;
-	off_t	fsize;
-
 
 	if (pipe(fds) == 0) {
 		if ((pid = fork()) == 0) {
@@ -32,30 +83,7 @@ int		ftp_put_write(int sock, char *filepath)
 		}  else if (pid > 0) {
 			ftp_send_data(sock, "writing", 7);
 			close(fds[0]);
-			ft_memset(data, 0, MAX_DATASIZE + 1);
-			if ((rv = ftp_recv_data(sock, &data)) > 0) {
-				fsize = ft_atoi(data);
-				ft_memset(data, 0, rv + 1);
-				while ( read ) {
-					if ((rv = ftp_recv_data(sock, &data)) < 1)
-						break;
-					if (ft_strstr(data, FTP_DATA_END_KEY))
-					{
-						char	*tmp;
-						int len = ft_strlen(FTP_DATA_END_KEY);
-						if (ft_strcmp(data, FTP_DATA_END_KEY) != 0) {
-							rv = ft_strlen(data);
-							tmp = ft_strsub(data, len, rv - len);
-							write(fds[1], tmp, ft_strlen(tmp));
-							ft_memdel((void **)&tmp);
-						}
-						ftp_error(ERR_INFO, "File received");
-						break;
-					}
-					write(fds[1], data, rv);
-					ft_memset(data, 0, rv + 1);
-				}
-			}
+			rv = ftp_put_handle_parent(sock, fds[1]);
 			close(fds[1]);
 			return (rv);
 		}
@@ -71,11 +99,9 @@ int		ftp_validate_overwrite(int sock)
 	ftp_send_data(sock, "overwrite", 9);
 	ftp_send_data(sock, "File already exists!\nOverwrite? [yes/no]", 40);
 	ftp_recv_data(sock, &buf);
-	if (ft_strcmp(buf, "yes") == 0) {
+	if (ft_strcmp(buf, "yes") == 0)
 		return (1);
-	}
-	else
-		return (-1);
+	return (-1);
 }
 
 int		ftp_put_handle_write(int sock, char *filepath)

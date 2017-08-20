@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/20 12:12:28 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/20 13:28:10 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int		ftp_mput(int sock, char *cmd)
 			if (ftp_put(sock, tmp) < 1)
 				rv = 0;
 			ft_memdel((void **)&tmp);
+			sleep(1);
 		}
 	}
 	ft_free_split(&sp);

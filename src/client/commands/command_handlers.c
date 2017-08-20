@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/14 10:02:54 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/20 11:56:16 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/20 13:31:23 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int		ftp_run_command(t_session *s, char *buf)
 		rv = ftp_pwd(s->socket, full_cmd);
 	else if (ft_strcmp(cmd, "menu") == 0 || ft_strcmp(cmd, "help") == 0)
 		rv = ftp_print_client_menu();
-	else if (ft_strcmp(cmd, "quit") == 0 && ft_strcmp(cmd, "exit") == 0)
+	else if (ft_strcmp(cmd, "quit") == 0 || ft_strcmp(cmd, "exit") == 0)
 		rv = ftp_quit(s->socket);
 	else
 		rv = ftp_run_command2(s->socket, cmd, full_cmd);

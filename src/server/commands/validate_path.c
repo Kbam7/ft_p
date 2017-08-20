@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/14 09:59:43 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/18 15:21:18 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/20 13:05:31 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 char	*ftp_remove_filename(char *path)
 {
 	char	*tmp;
-	int 	len;
+	int		len;
 
 	len = ft_strlen(path);
 	tmp = ft_strrchr(path, '/');
@@ -25,7 +25,10 @@ char	*ftp_remove_filename(char *path)
 	return (path);
 }
 
-/* Checks if path is lower than root directory */
+/*
+** Checks if path is lower than root directory
+*/
+
 char	*ftp_validate_path(char *root, char *path)
 {
 	char	buf[4096];
@@ -34,7 +37,7 @@ char	*ftp_validate_path(char *root, char *path)
 	ret = NULL;
 	ft_memset(buf, 0, 4096);
 	realpath(path, buf);
-	if (ft_strncmp(buf, root, ft_strlen(root) - 1) == 0) 
+	if (ft_strncmp(buf, root, ft_strlen(root) - 1) == 0)
 		ret = buf;
 	return (ret);
 }

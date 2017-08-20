@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_signals.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 14:54:19 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/12 14:58:10 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/20 11:38:09 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,4 +21,4 @@
 
 void	sigchld_handler(int s);
 
-#endif /* FTP_SIGNALS_H */
+#endif

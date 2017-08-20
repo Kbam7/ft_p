@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ftp_quit.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/15 16:48:48 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/15 17:33:35 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/20 13:04:32 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp_server.h"
 
-int     ftp_quit(void)
+int		ftp_quit(void)
 {
-    ftp_error(ERR_INFO, "User shutdown client");
-    return (0);
+	ftp_error(ERR_INFO, "User shutdown client");
+	return (0);
 }

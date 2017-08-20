@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbam7 <kbam7@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/09 12:37:20 by kbamping          #+#    #+#             */
-/*   Updated: 2017/08/15 01:02:34 by kbam7            ###   ########.fr       */
+/*   Updated: 2017/08/20 11:38:42 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int				ft_isint(char *str);
 char			*ft_strjoinstr(char *s1, char *s2, char *s3);
 int				ft_iswhtspc(char c);
 char			*ft_strcaps(char *str);
-void            ft_strcap(char *str);
+void			ft_strcap(char *str);
 int				ft_countarray(char **arr);
 
 /*

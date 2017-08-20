@@ -6,17 +6,18 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/19 17:57:46 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/20 12:10:29 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp_client.h"
 
-int     ftp_lpwd(void)
+int		ftp_lpwd(void)
 {
 	char	*cwd;
-	
-	if ((cwd = getcwd(NULL, 0)) != NULL) {
+
+	if ((cwd = getcwd(NULL, 0)) != NULL)
+	{
 		ft_putendl(cwd);
 	}
 	return (1);

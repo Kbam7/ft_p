@@ -6,7 +6,7 @@
 #    By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/17 12:35:16 by kbamping          #+#    #+#              #
-#    Updated: 2017/08/19 17:57:03 by kbamping         ###   ########.fr        #
+#    Updated: 2017/08/20 12:24:41 by kbamping         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ CLT_PATH	= $(SRC_PATH)/client
 NTWRK_PATH	= $(SRC_PATH)/network
 
 GLOBAL_SRCS	=	$(NTWRK_PATH)/ftp_errors.c $(NTWRK_PATH)/ftp_network.c		\
-				$(NTWRK_PATH)/ftp_filecheck.c								
+				$(NTWRK_PATH)/ftp_filecheck.c $(NTWRK_PATH)/ftp_network2.c						
 
 SVR_SRCS	=	$(SVR_PATH)/server.c $(SVR_PATH)/server_init.c				\
 				$(SVR_PATH)/server_signals.c $(SVR_PATH)/connect.c			\

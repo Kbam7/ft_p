@@ -6,7 +6,7 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/19 18:09:48 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/20 12:00:06 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,18 @@ int		ftp_get_write(int sock, char *filepath)
 	pid_t	pid;
 	int		rv;
 
-	if (pipe(fds) == 0) {
-		if ((pid = fork()) == 0) {
+	if (pipe(fds) == 0)
+	{
+		if ((pid = fork()) == 0)
+		{
 			close(fds[1]);
 			dup2(fds[0], STDIN_FILENO);
 			close(fds[0]);
 			execl("/usr/bin/xxd", "xxd", "-r", "-", filepath, (char *)NULL);
 			exit(EXIT_FAILURE);
-		}  else if (pid > 0) {
+		}
+		else if (pid > 0)
+		{
 			close(fds[0]);
 			rv = ftp_write_from_socket(sock, fds[1]);
 			close(fds[1]);
@@ -45,7 +49,8 @@ int		ftp_validate_overwrite(char *path)
 	tmp = ft_strjoinstr("'", path, "' already exists!\nOverwrite? [yes/no]");
 	ftp_error(ERR_INFO, tmp);
 	ft_memdel((void **)&tmp);
-	if (ft_gnl(STDIN_FILENO, &line) > 0) {
+	if (ft_gnl(STDIN_FILENO, &line) > 0)
+	{
 		if (ft_strcmp(line, "yes") == 0)
 			rv = 1;
 		ft_memdel((void **)&line);
@@ -53,7 +58,8 @@ int		ftp_validate_overwrite(char *path)
 	return (rv);
 }
 
-int     ftp_get(int sock, char *cmd) {
+int		ftp_get(int sock, char *cmd)
+{
 	int		rv;
 	char	data[MAX_DATASIZE + 1];
 

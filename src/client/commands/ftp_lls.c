@@ -6,17 +6,16 @@
 /*   By: kbamping <kbamping@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/17 08:13:58 by kbam7             #+#    #+#             */
-/*   Updated: 2017/08/19 17:59:09 by kbamping         ###   ########.fr       */
+/*   Updated: 2017/08/20 12:07:00 by kbamping         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp_client.h"
 
-int     ftp_lls(char *cmd)
+int		ftp_lls(char *cmd)
 {
 	pid_t	pid;
 	int		fds[2];
-	char	**argv;
 	char	*buf;
 
 	pid = 0;
@@ -25,9 +24,7 @@ int     ftp_lls(char *cmd)
 		close(fds[0]);
 		dup2(fds[1], STDOUT_FILENO);
 		close(fds[1]);
-		argv = ft_strsplit(cmd, ' ');
-		execv("/bin/ls", (char * const *)argv);
-		ft_putendl("ls failed to execute");
+		execv("/bin/ls", (char *const *)ft_strsplit(cmd, ' '));
 		exit(EXIT_FAILURE);
 	}
 	else if (pid > 0)
